@@ -1,95 +1,111 @@
-import type { Release } from "./types"
+import type { Release } from "./types";
 
-// ✅ 브라우저에서도 필요하므로 NEXT_PUBLIC_ 사용
-// - 로컬: .env.local에 설정
-// - 배포: Vercel(또는 배포 플랫폼) 환경변수로 설정
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL
+/**
+ * API Base URL
+ * - Vercel 배포: NEXT_PUBLIC_API_BASE_URL 사용
+ * - 로컬 개발: fallback으로 localhost 사용
+ */
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 
-function requireApiBase(): string {
-  if (!API_BASE) {
-    throw new Error(
-      "NEXT_PUBLIC_API_BASE_URL is not set. Add it to .env.local (and your deployment env vars)."
-    )
-  }
-  return API_BASE
+/**
+ * URL을 안전하게 합치는 유틸
+ * (base 끝에 / 있든 없든 문제 없게)
+ */
+function joinUrl(base: string, path: string) {
+  return `${base.replace(/\/$/, "")}${path}`;
 }
 
-async function fetchJson<T>(input: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(input, {
-    cache: "no-store",
-    ...init,
-    headers: {
-      "Content-Type": "application/json",
-      ...(init?.headers ?? {}),
-    },
-  })
-
-  if (!res.ok) {
-    // 디버깅에 도움 되도록 본문도 읽어봄(실패해도 무시)
-    let detail = ""
-    try {
-      detail = await res.text()
-    } catch {}
-    throw new Error(`Request failed (${res.status}): ${detail || res.statusText}`)
-  }
-
-  return res.json()
-}
+/* =========================
+   Releases 조회
+   ========================= */
 
 export async function fetchNewReleases(): Promise<Release[]> {
-  const base = requireApiBase()
-  return fetchJson<Release[]>(`${base}/releases`)
+  const res = await fetch(joinUrl(API_BASE, "/releases"), {
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch releases");
+  }
+
+  return res.json();
 }
 
-export async function fetchReleaseById(id: string): Promise<Release | null> {
-  const base = requireApiBase()
-  const res = await fetch(`${base}/releases/${id}`, { cache: "no-store" })
-  if (!res.ok) return null
-  return (await res.json()) as Release
+export async function fetchReleaseById(
+  id: string
+): Promise<Release | null> {
+  const res = await fetch(joinUrl(API_BASE, `/releases/${id}`), {
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    return null;
+  }
+
+  return res.json();
 }
 
-
-export async function fetchReleasesByArtistName(
-  artistName: string
-): Promise<Release[]> {
-  // 지금은 서버 필터가 없으니 전체 받아서 필터링
-  const releases = await fetchNewReleases()
-  return releases.filter((r) => r.artistName === artistName)
-}
+/* =========================
+   Release 생성
+   ========================= */
 
 export type CreateReleasePayload = {
-  artistName: string
-  albumTitle: string
-  color?: string
-  format?: string
-  coverImageUrl?: string
-}
+  artistName: string;
+  albumTitle: string;
+  color?: string;
+  format?: string;
+  coverImageUrl?: string;
+};
 
 export async function createRelease(
   payload: CreateReleasePayload
-): Promise<Release> {
-  const base = requireApiBase()
-  return fetchJson<Release>(`${base}/releases`, {
+) {
+  const res = await fetch(joinUrl(API_BASE, "/releases"), {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(payload),
-  })
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to create release");
+  }
+
+  return res.json();
 }
 
+/* =========================
+   Listing 생성
+   ========================= */
+
 export type CreateListingPayload = {
-  sourceName: string
-  sourceProductTitle: string
-  url: string
-  collectedAgo: string
-  imageUrl?: string
-}
+  sourceName: string;
+  sourceProductTitle: string;
+  url: string;
+  collectedAgo: string;
+  imageUrl?: string;
+};
 
 export async function addListingToRelease(
   releaseId: string,
   payload: CreateListingPayload
-): Promise<Release> {
-  const base = requireApiBase()
-  return fetchJson<Release>(`${base}/releases/${releaseId}/listings`, {
-    method: "POST",
-    body: JSON.stringify(payload),
-  })
+) {
+  const res = await fetch(
+    joinUrl(API_BASE, `/releases/${releaseId}/listings`),
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to add listing");
+  }
+
+  return res.json();
 }

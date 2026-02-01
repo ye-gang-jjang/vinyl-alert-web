@@ -1,65 +1,106 @@
-import Image from "next/image";
+export const dynamic = "force-dynamic"
+export const revalidate = 0
 
-export default function Home() {
+import { fetchNewReleases } from "@/lib/api"
+import { ReleaseCard } from "@/components/releases/ReleaseCard"
+import ReleaseControls from "@/components/releases/ReleaseControls"
+
+type SortKey = "default" | "artist_asc" | "album_asc"
+
+function uniqSorted(arr: string[]) {
+  return Array.from(new Set(arr)).sort((a, b) => a.localeCompare(b))
+}
+
+type SearchParams = {
+  sort?: string
+  artist?: string
+  store?: string
+}
+
+export default async function HomePage({
+  searchParams,
+}: {
+  // ✅ Next 버전에 따라 Promise일 수 있어서 Promise로 받는 게 안전
+  searchParams: Promise<SearchParams>
+}) {
+  // ✅ 핵심: await
+  const sp = await searchParams
+
+  const releases = await fetchNewReleases()
+
+  const selectedSort = (sp.sort as SortKey) || "default"
+  const selectedArtist = sp.artist ?? ""
+  const selectedStore = sp.store ?? ""
+
+  const artists = uniqSorted(releases.map((r) => r.artistName))
+
+  // 1) 필터
+  let filtered = releases
+
+  if (selectedArtist) {
+    filtered = filtered.filter((r) => r.artistName === selectedArtist)
+  }
+
+  if (selectedStore) {
+    filtered = filtered.filter((r) =>
+      r.listings?.some((l) => l.sourceName === selectedStore)
+    )
+  }
+
+  // 2) 정렬
+  if (selectedSort === "artist_asc") {
+    filtered = [...filtered].sort((a, b) =>
+      a.artistName.localeCompare(b.artistName)
+    )
+  } else if (selectedSort === "album_asc") {
+    filtered = [...filtered].sort((a, b) =>
+      a.albumTitle.localeCompare(b.albumTitle)
+    )
+  }
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="space-y-6">
+      <header className="space-y-2">
+        <h1 className="text-2xl font-bold">New Releases</h1>
+        <p className="text-sm text-gray-600">
+          최근 수집된 LP 발매/판매 정보 목록입니다.
+        </p>
+      </header>
+
+      <ReleaseControls
+        artists={artists}
+        selectedArtist={selectedArtist}
+        selectedStore={selectedStore}
+        selectedSort={selectedSort}
+      />
+
+      {/* ✅ 디버깅용(원인 확인되면 지워도 됨): 현재 적용된 값이 화면에 보임 */}
+      <div className="rounded-lg border p-3 text-xs text-gray-600">
+        sort={selectedSort} / artist={selectedArtist || "(all)"} / store=
+        {selectedStore || "(all)"} / results={filtered.length}
+      </div>
+
+      {filtered.length === 0 ? (
+        <div className="rounded-xl border p-6">
+          <p className="text-sm text-gray-600">조건에 맞는 릴리즈가 없습니다.</p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+      ) : (
+        <section className="grid gap-4 sm:grid-cols-2">
+          {filtered.map((r) => (
+            <ReleaseCard
+              key={r.id}
+              id={r.id}
+              artist={r.artistName}
+              album={r.albumTitle}
+              color={r.color}
+              format={r.format}
+              coverImageUrl={r.coverImageUrl}
+              storesCount={r.storesCount}
+              collectedAgo={r.latestCollectedAgo}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+          ))}
+        </section>
+      )}
     </div>
-  );
+  )
 }

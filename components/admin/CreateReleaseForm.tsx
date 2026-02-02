@@ -44,10 +44,12 @@ export function CreateReleaseForm({
       setColor("")
       setFormat("")
       setCoverImageUrl("")
-
+      
       onCreated?.(created.id)
-    } catch (err: any) {
-      setStatus?.(`❌ 릴리즈 등록 실패: ${err?.message ?? "Unknown error"}`)
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Unknown error"
+      setStatus?.(`❌ 릴리즈 등록 실패: ${message}`)
     } finally {
       setIsLoading(false)
       setGlobalLoading?.(false)

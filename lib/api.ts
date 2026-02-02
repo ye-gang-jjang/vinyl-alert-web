@@ -32,9 +32,7 @@ export async function fetchNewReleases(): Promise<Release[]> {
   return res.json();
 }
 
-export async function fetchReleaseById(
-  id: string
-): Promise<Release | null> {
+export async function fetchReleaseById(id: string): Promise<Release | null> {
   const res = await fetch(joinUrl(API_BASE, `/releases/${id}`), {
     cache: "no-store",
   });
@@ -44,6 +42,17 @@ export async function fetchReleaseById(
   }
 
   return res.json();
+}
+
+/**
+ * 아티스트 페이지용: 특정 아티스트의 릴리즈만 가져오기
+ * (MVP에서는 백엔드에 필터 API가 없으므로 전체를 받아서 필터링)
+ */
+export async function fetchReleasesByArtistName(
+  artistName: string
+): Promise<Release[]> {
+  const releases = await fetchNewReleases();
+  return releases.filter((r) => r.artistName === artistName);
 }
 
 /* =========================
@@ -58,9 +67,7 @@ export type CreateReleasePayload = {
   coverImageUrl?: string;
 };
 
-export async function createRelease(
-  payload: CreateReleasePayload
-) {
+export async function createRelease(payload: CreateReleasePayload) {
   const res = await fetch(joinUrl(API_BASE, "/releases"), {
     method: "POST",
     headers: {

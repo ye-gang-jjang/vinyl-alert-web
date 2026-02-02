@@ -58,8 +58,9 @@ export function AddListingForm({
       setUrl("")
 
       await onRefreshReleases()
-    } catch (err: any) {
-      setStatus?.(`❌ 판매처 추가 실패: ${err?.message ?? "Unknown error"}`)
+    } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Unknown error"
+      setStatus?.(`❌ 판매처 추가 실패: ${message}`)
     } finally {
       setIsLoading(false)
       setGlobalLoading?.(false)

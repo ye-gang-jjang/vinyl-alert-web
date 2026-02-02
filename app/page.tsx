@@ -85,7 +85,7 @@ export default async function HomePage({
           <p className="text-sm text-gray-600">조건에 맞는 릴리즈가 없습니다.</p>
         </div>
       ) : (
-        <section className="grid gap-4 sm:grid-cols-2">
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map((r) => (
             <ReleaseCard
               key={r.id}

@@ -12,21 +12,27 @@ import {
   CommandList,
 } from "@/components/ui/command"
 import { Check, ChevronsUpDown } from "lucide-react"
-import { getStoreIconUrl } from "@/lib/constants/storeIcons"
 
-type Store = { id: string; name: string }
+type Store = {
+  id: string
+  name: string
+  slug: string
+  iconUrl: string
+}
 
 type Props = {
   stores: Store[]
-  value: string
-  onChange: (name: string) => void
+  value: string // storeSlug
+  onChange: (slug: string) => void
   disabled?: boolean
 }
 
 export function StoreCombobox({ stores, value, onChange, disabled }: Props) {
   const [open, setOpen] = React.useState(false)
 
-  const selectedIconUrl = value ? getStoreIconUrl(value) : undefined
+  const selectedStore = stores.find((s) => s.slug === value)
+  const selectedLabel = selectedStore?.name ?? ""
+  const selectedIconUrl = selectedStore?.iconUrl
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -40,13 +46,13 @@ export function StoreCombobox({ stores, value, onChange, disabled }: Props) {
           disabled={disabled}
         >
           <div className="flex min-w-0 items-center gap-2">
-            {/* 선택된 판매처 아이콘 */}
+            {/* 선택된 스토어 아이콘 */}
             <div className="h-5 w-5 shrink-0 overflow-hidden rounded bg-white">
               {selectedIconUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={selectedIconUrl}
-                  alt={`${value} icon`}
+                  alt={`${selectedLabel} icon`}
                   className="h-full w-full object-contain"
                 />
               ) : (
@@ -54,7 +60,9 @@ export function StoreCombobox({ stores, value, onChange, disabled }: Props) {
               )}
             </div>
 
-            <span className="truncate">{value ? value : "판매처 선택"}</span>
+            <span className="truncate">
+              {selectedLabel ? selectedLabel : "스토어 선택"}
+            </span>
           </div>
 
           <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
@@ -63,21 +71,20 @@ export function StoreCombobox({ stores, value, onChange, disabled }: Props) {
 
       <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
         <Command>
-          <CommandInput placeholder="판매처 검색..." />
+          <CommandInput placeholder="스토어 검색..." />
           <CommandList>
             <CommandEmpty>검색 결과가 없음</CommandEmpty>
 
             <CommandGroup>
               {stores.map((s) => {
-                const isSelected = value === s.name
-                const iconUrl = getStoreIconUrl(s.name)
+                const isSelected = value === s.slug
 
                 return (
                   <CommandItem
                     key={s.id}
                     value={s.name}
                     onSelect={() => {
-                      onChange(s.name)
+                      onChange(s.slug)
                       setOpen(false)
                     }}
                   >
@@ -89,10 +96,10 @@ export function StoreCombobox({ stores, value, onChange, disabled }: Props) {
 
                     {/* 리스트 아이콘 */}
                     <div className="mr-2 h-5 w-5 shrink-0 overflow-hidden rounded bg-white">
-                      {iconUrl ? (
+                      {s.iconUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
-                          src={iconUrl}
+                          src={s.iconUrl}
                           alt={`${s.name} icon`}
                           className="h-full w-full object-contain"
                         />

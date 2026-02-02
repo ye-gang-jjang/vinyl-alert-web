@@ -84,14 +84,12 @@ export async function createRelease(payload: CreateReleasePayload) {
 /* =========================
    Listing 생성
    ========================= */
-
 export type CreateListingPayload = {
-  sourceName: string;
-  sourceProductTitle: string;
-  url: string;
-  collectedAgo: string;
-  imageUrl?: string;
-};
+  storeSlug: string
+  sourceProductTitle: string
+  url: string
+  collectedAgo: string
+}
 
 export async function addListingToRelease(
   releaseId: string,
@@ -106,11 +104,43 @@ export async function addListingToRelease(
       },
       body: JSON.stringify(payload),
     }
-  );
+  )
 
   if (!res.ok) {
-    throw new Error("Failed to add listing");
+    throw new Error("Failed to add listing")
   }
 
-  return res.json();
+  return res.json()
+}
+
+/* =========================
+   Stores (Admin)
+   ========================= */
+export type Store = {
+  id: string
+  name: string
+  slug: string
+  iconUrl: string
+}
+
+export type CreateStorePayload = {
+  name: string
+  slug: string
+  iconUrl: string
+}
+
+export async function fetchStores(): Promise<Store[]> {
+  const res = await fetch(joinUrl(API_BASE, "/stores"), { cache: "no-store" })
+  if (!res.ok) throw new Error("Failed to fetch stores")
+  return res.json()
+}
+
+export async function createStore(payload: CreateStorePayload) {
+  const res = await fetch(joinUrl(API_BASE, "/stores"), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  })
+  if (!res.ok) throw new Error("Failed to create store")
+  return res.json()
 }

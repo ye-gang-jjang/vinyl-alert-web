@@ -1,12 +1,17 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import type { Release } from "@/lib/types"
-import { addListingToRelease } from "@/lib/api"
-import { STORES } from "@/lib/constants/stores"
-import { getStoreIconUrl } from "@/lib/constants/storeIcons"
+import { addListingToRelease, fetchStores } from "@/lib/api"
 import { ReleaseCombobox } from "@/components/admin/ReleaseCombobox"
 import { StoreCombobox } from "@/components/admin/StoreCombobox"
+
+type Store = {
+  id: string
+  name: string
+  slug: string
+  iconUrl: string
+}
 
 type Props = {
   releases: Release[]
@@ -29,9 +34,28 @@ export function AddListingForm({
 }: Props) {
   const [isLoading, setIsLoading] = useState(false)
 
-  const [sourceName, setSourceName] = useState("")
+  const [stores, setStores] = useState<Store[]>([])
+  const [storeSlug, setStoreSlug] = useState("")
+
   const [sourceProductTitle, setSourceProductTitle] = useState("")
   const [url, setUrl] = useState("")
+
+  async function refreshStores() {
+    try {
+      const data = await fetchStores()
+      setStores(data)
+      if (!storeSlug && data.length > 0) {
+        setStoreSlug(data[0].slug)
+      }
+    } catch {
+      // 필요하면 setStatus로 표시해도 됨
+    }
+  }
+
+  useEffect(() => {
+    refreshStores().catch(() => {})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -41,25 +65,23 @@ export function AddListingForm({
 
     try {
       if (!selectedReleaseId) throw new Error("대상 릴리즈를 선택해 주세요.")
-      if (!sourceName) throw new Error("판매처를 선택해 주세요.")
+      if (!storeSlug) throw new Error("스토어를 선택해 주세요.")
 
       const updated = await addListingToRelease(selectedReleaseId, {
-        sourceName,
+        storeSlug,
         sourceProductTitle,
         url,
         collectedAgo: "just now",
-        imageUrl: getStoreIconUrl(sourceName), // 프론트에서도 보내고, 백에서도 강제됨
       })
 
       setStatus?.(`✅ 판매처가 추가됨 (Release ID: ${updated.id})`)
 
-      setSourceName("")
       setSourceProductTitle("")
       setUrl("")
 
       await onRefreshReleases()
     } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : "Unknown error"
+      const message = err instanceof Error ? err.message : "Unknown error"
       setStatus?.(`❌ 판매처 추가 실패: ${message}`)
     } finally {
       setIsLoading(false)
@@ -92,6 +114,15 @@ export function AddListingForm({
             목록 새로고침
           </button>
 
+          <button
+            type="button"
+            className="rounded-lg border px-3 py-2 text-sm hover:bg-gray-50 disabled:opacity-50"
+            onClick={() => refreshStores()}
+            disabled={isLoading || isLoadingGlobal}
+          >
+            스토어 새로고침
+          </button>
+
           {selectedReleaseId && (
             <p className="text-xs text-gray-500">
               선택된 릴리즈 ID:{" "}
@@ -101,19 +132,19 @@ export function AddListingForm({
         </div>
       </div>
 
-      {/* 판매처 선택 */}
+      {/* 스토어 선택 */}
       <div className="space-y-2">
-        <label className="block text-sm font-medium">판매처 (필수)</label>
+        <label className="block text-sm font-medium">스토어 (필수)</label>
 
         <StoreCombobox
-          stores={STORES}
-          value={sourceName}
-          onChange={setSourceName}
-          disabled={isLoading || isLoadingGlobal}
+          stores={stores}
+          value={storeSlug}
+          onChange={setStoreSlug}
+          disabled={isLoading || isLoadingGlobal || stores.length === 0}
         />
 
         <p className="text-xs text-gray-500">
-          판매처는 선택형으로 고정됨 (오타 방지)
+          스토어는 DB에서 관리되며, 선택한 storeSlug만 서버로 전송됨
         </p>
       </div>
 
@@ -144,7 +175,12 @@ export function AddListingForm({
       <button
         type="submit"
         className="rounded-lg border px-4 py-2 hover:bg-gray-50 disabled:opacity-50"
-        disabled={isLoading || isLoadingGlobal || releases.length === 0}
+        disabled={
+          isLoading ||
+          isLoadingGlobal ||
+          releases.length === 0 ||
+          stores.length === 0
+        }
       >
         {isLoading ? "추가 중..." : "판매처 추가"}
       </button>

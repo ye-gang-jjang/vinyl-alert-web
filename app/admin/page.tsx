@@ -5,6 +5,7 @@ import type { Release } from "@/lib/types"
 import { fetchNewReleases } from "@/lib/api"
 import { CreateReleaseForm } from "@/components/admin/CreateReleaseForm"
 import { AddListingForm } from "@/components/admin/AddListingForm"
+import { CreateStoreForm } from "@/components/admin/CreateStoreForm"
 
 export default function AdminPage() {
   const [status, setStatus] = useState<string | null>(null)
@@ -28,7 +29,6 @@ export default function AdminPage() {
 
   useEffect(() => {
     refreshReleases().catch(() => {})
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -40,6 +40,7 @@ export default function AdminPage() {
         </p>
       </header>
 
+      {/* 릴리즈 등록 */}
       <CreateReleaseForm
         setStatus={setStatus}
         setGlobalLoading={setIsLoading}
@@ -49,6 +50,13 @@ export default function AdminPage() {
         }}
       />
 
+      {/* ✅ 스토어 등록 */}
+      <CreateStoreForm
+        setStatus={setStatus}
+        setGlobalLoading={setIsLoading}
+      />
+
+      {/* 판매처(Listing) 등록 */}
       <AddListingForm
         releases={releases}
         selectedReleaseId={selectedReleaseId}

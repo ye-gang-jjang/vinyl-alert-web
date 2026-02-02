@@ -30,8 +30,6 @@ export default async function ArtistPage({ params }: PageProps) {
             id={r.id}
             artist={r.artistName}
             album={r.albumTitle}
-            color={r.color}
-            format={r.format}
             storesCount={r.storesCount}
             collectedAgo={r.latestCollectedAgo}
           />

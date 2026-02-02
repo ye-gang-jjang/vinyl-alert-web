@@ -4,8 +4,6 @@ type ReleaseCardProps = {
   id: string
   artist: string
   album: string
-  color?: string
-  format?: string
   coverImageUrl?: string
   storesCount: number
   collectedAgo: string
@@ -15,8 +13,6 @@ export function ReleaseCard({
   id,
   artist,
   album,
-  color,
-  format,
   coverImageUrl,
   storesCount,
   collectedAgo,
@@ -48,11 +44,6 @@ export function ReleaseCard({
         <div className="min-w-0 flex-1">
           <div className="truncate text-base font-semibold">
             {artist} — {album}
-          </div>
-
-          <div className="mt-1 text-sm text-gray-600">
-            {color ? `컬러: ${color}` : "컬러: -"}
-            {format ? ` · 포맷: ${format}` : ""}
           </div>
 
           <div className="mt-2 text-xs text-gray-500">

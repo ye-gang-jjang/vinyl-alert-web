@@ -62,8 +62,6 @@ export async function fetchReleasesByArtistName(
 export type CreateReleasePayload = {
   artistName: string;
   albumTitle: string;
-  color?: string;
-  format?: string;
   coverImageUrl?: string;
 };
 

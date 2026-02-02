@@ -56,9 +56,7 @@ export function ReleaseCombobox({
   const selectedRelease = releases.find((r) => r.id === selectedReleaseId)
 
   const selectedLabel = selectedRelease
-    ? `${selectedRelease.artistName} — ${selectedRelease.albumTitle}${
-        selectedRelease.color ? ` (${selectedRelease.color})` : ""
-      }${selectedRelease.format ? ` / ${selectedRelease.format}` : ""} [ID:${selectedRelease.id}]`
+    ? `${selectedRelease.artistName} — ${selectedRelease.albumTitle} [ID:${selectedRelease.id}]`
     : releases.length === 0
       ? "등록된 릴리즈가 없음"
       : "릴리즈 선택"
@@ -94,9 +92,7 @@ export function ReleaseCombobox({
 
             <CommandGroup>
               {releases.map((r) => {
-                const label = `${r.artistName} — ${r.albumTitle}${
-                  r.color ? ` (${r.color})` : ""
-                }${r.format ? ` / ${r.format}` : ""} [ID:${r.id}]`
+                const label = `${r.artistName} — ${r.albumTitle} [ID:${r.id}]`
                 const isSelected = selectedReleaseId === r.id
 
                 return (

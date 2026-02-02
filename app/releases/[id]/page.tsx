@@ -26,8 +26,6 @@ export default async function ReleasePage({ params }: PageProps) {
         </h1>
 
         <div className="text-sm text-gray-600">
-          {release.color ? `컬러: ${release.color}` : "컬러: -"}
-          {release.format ? ` · 포맷: ${release.format}` : ""}
           {` · 판매처 ${release.storesCount}개`}
           {` · 최근 수집: ${release.latestCollectedAgo}`}
         </div>

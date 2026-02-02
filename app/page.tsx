@@ -92,8 +92,6 @@ export default async function HomePage({
               id={r.id}
               artist={r.artistName}
               album={r.albumTitle}
-              color={r.color}
-              format={r.format}
               coverImageUrl={r.coverImageUrl}
               storesCount={r.storesCount}
               collectedAgo={r.latestCollectedAgo}

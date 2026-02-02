@@ -18,8 +18,6 @@ export function CreateReleaseForm({
 
   const [artistName, setArtistName] = useState("")
   const [albumTitle, setAlbumTitle] = useState("")
-  const [color, setColor] = useState("")
-  const [format, setFormat] = useState("")
   const [coverImageUrl, setCoverImageUrl] = useState("")
 
   async function onSubmit(e: React.FormEvent) {
@@ -32,8 +30,6 @@ export function CreateReleaseForm({
       const created = await createRelease({
         artistName,
         albumTitle,
-        color: color || undefined,
-        format: format || undefined,
         coverImageUrl: coverImageUrl || undefined,
       })
 
@@ -41,8 +37,6 @@ export function CreateReleaseForm({
 
       setArtistName("")
       setAlbumTitle("")
-      setColor("")
-      setFormat("")
       setCoverImageUrl("")
       
       onCreated?.(created.id)
@@ -78,28 +72,6 @@ export function CreateReleaseForm({
           onChange={(e) => setAlbumTitle(e.target.value)}
           required
         />
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="space-y-2">
-          <label className="block text-sm font-medium">컬러 (선택)</label>
-          <input
-            className="w-full rounded-lg border p-2"
-            value={color}
-            onChange={(e) => setColor(e.target.value)}
-            placeholder="Red / Black / Clear..."
-          />
-        </div>
-
-        <div className="space-y-2">
-          <label className="block text-sm font-medium">포맷 (선택)</label>
-          <input
-            className="w-full rounded-lg border p-2"
-            value={format}
-            onChange={(e) => setFormat(e.target.value)}
-            placeholder="1LP / 2LP"
-          />
-        </div>
       </div>
 
       <div className="space-y-2">

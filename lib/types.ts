@@ -11,8 +11,6 @@ export type Release = {
   id: string
   artistName: string
   albumTitle: string
-  color?: string
-  format?: string
   coverImageUrl?: string
 
   latestCollectedAgo: string

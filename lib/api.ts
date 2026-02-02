@@ -88,7 +88,6 @@ export type CreateListingPayload = {
   storeSlug: string
   sourceProductTitle: string
   url: string
-  collectedAgo: string
 }
 
 export async function addListingToRelease(

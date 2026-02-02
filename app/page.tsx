@@ -74,12 +74,6 @@ export default async function HomePage({
         selectedSort={selectedSort}
       />
 
-      {/* ✅ 디버깅용(원인 확인되면 지워도 됨): 현재 적용된 값이 화면에 보임 */}
-      <div className="rounded-lg border p-3 text-xs text-gray-600">
-        sort={selectedSort} / artist={selectedArtist || "(all)"} / store=
-        {selectedStore || "(all)"} / results={filtered.length}
-      </div>
-
       {filtered.length === 0 ? (
         <div className="rounded-xl border p-6">
           <p className="text-sm text-gray-600">조건에 맞는 릴리즈가 없습니다.</p>
@@ -94,7 +88,8 @@ export default async function HomePage({
               album={r.albumTitle}
               coverImageUrl={r.coverImageUrl}
               storesCount={r.storesCount}
-              collectedAgo={r.latestCollectedAgo}
+              latestCollectedAt={r.latestCollectedAt}
+              collectedAt={r.collectedAt}
             />
           ))}
         </section>

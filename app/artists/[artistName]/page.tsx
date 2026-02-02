@@ -2,18 +2,12 @@ import { ReleaseCard } from "@/components/releases/ReleaseCard"
 import { fetchReleasesByArtistName } from "@/lib/api"
 
 type PageProps = {
-  params: Promise<{ id: string }>
-}
-
-const artistIdToName: Record<string, string> = {
-  "1": "IU",
-  "2": "BTS",
+  params: Promise<{ artistName: string }>
 }
 
 export default async function ArtistPage({ params }: PageProps) {
-  const { id } = await params
+  const { artistName } = await params
 
-  const artistName = artistIdToName[id] ?? `Artist #${id}`
   const releases = await fetchReleasesByArtistName(artistName)
 
   return (
@@ -30,8 +24,10 @@ export default async function ArtistPage({ params }: PageProps) {
             id={r.id}
             artist={r.artistName}
             album={r.albumTitle}
+            coverImageUrl={r.coverImageUrl}
             storesCount={r.storesCount}
-            collectedAgo={r.latestCollectedAgo}
+            latestCollectedAt={r.latestCollectedAt}
+            collectedAt={r.collectedAt}
           />
         ))}
       </section>

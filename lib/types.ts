@@ -3,8 +3,9 @@ export type Listing = {
   sourceName: string
   sourceProductTitle: string
   url: string
-  collectedAgo: string
-  imageUrl?: string
+  imageUrl: string
+  collectedAt: string
+  latestCollectedAt?: string | null
 }
 
 export type Release = {
@@ -12,9 +13,8 @@ export type Release = {
   artistName: string
   albumTitle: string
   coverImageUrl?: string
-
-  latestCollectedAgo: string
+  collectedAt?: string | null
+  latestCollectedAt?: string | null
   storesCount: number
-
   listings: Listing[]
 }

@@ -71,7 +71,6 @@ export function AddListingForm({
         storeSlug,
         sourceProductTitle,
         url,
-        collectedAgo: "just now",
       })
 
       setStatus?.(`✅ 판매처가 추가됨 (Release ID: ${updated.id})`)

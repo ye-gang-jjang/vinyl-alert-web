@@ -1,16 +1,25 @@
+import { formatCollectedAgo } from "@/lib/formatters/formatCollectedAgo"
+
 type StoreItemProps = {
   name: string
   title: string
-  collectedAgo: string
   url: string
+  collectedAt?: string | null
+  latestCollectedAt?: string | null
 }
 
 export function StoreItem({
   name,
   title,
-  collectedAgo,
   url,
+  collectedAt,
+  latestCollectedAt,
 }: StoreItemProps) {
+  const collectedText = formatCollectedAgo({
+    latestCollectedAt,
+    collectedAt,
+  })
+
   return (
     <a
       href={url}
@@ -21,7 +30,7 @@ export function StoreItem({
       <div className="text-sm text-gray-500">{name}</div>
       <div className="mt-1 font-medium">{title}</div>
       <div className="mt-2 text-sm text-gray-600">
-        Collected: {collectedAgo}
+        Collected: {collectedText}
       </div>
     </a>
   )

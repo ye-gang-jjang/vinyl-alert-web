@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { formatCollectedAgo } from "@/lib/formatters/formatCollectedAgo"
 
 type ReleaseCardProps = {
   id: string
@@ -6,7 +7,8 @@ type ReleaseCardProps = {
   album: string
   coverImageUrl?: string
   storesCount: number
-  collectedAgo: string
+  collectedAt?: string | null
+  latestCollectedAt?: string | null
 }
 
 export function ReleaseCard({
@@ -15,8 +17,14 @@ export function ReleaseCard({
   album,
   coverImageUrl,
   storesCount,
-  collectedAgo,
+  collectedAt,
+  latestCollectedAt,
 }: ReleaseCardProps) {
+  const collectedText = formatCollectedAgo({
+    latestCollectedAt,
+    collectedAt,
+  })
+
   return (
     <Link
       href={`/releases/${id}`}
@@ -47,7 +55,7 @@ export function ReleaseCard({
           </div>
 
           <div className="mt-2 text-xs text-gray-500">
-            판매처 {storesCount}개 · 최근 수집: {collectedAgo}
+            판매처 {storesCount}개 · 최근 수집: {collectedText}
           </div>
         </div>
       </div>

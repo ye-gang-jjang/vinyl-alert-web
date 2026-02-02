@@ -79,9 +79,7 @@ export function CreateStoreForm({ setStatus, setGlobalLoading }: Props) {
           className="rounded-md border px-3 py-2 text-sm"
           value={name}
           onChange={(e) => {
-            const v = e.target.value
-            setName(v)
-            setSlug(toSlug(v))
+            setName(e.target.value)
           }}
           placeholder="예: 서울 바이닐"
         />

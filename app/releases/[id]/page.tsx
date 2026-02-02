@@ -48,6 +48,7 @@ export default async function ReleasePage({ params }: PageProps) {
                   name={l.sourceName}
                   title={l.sourceProductTitle}
                   url={l.url}
+                  imageUrl={l.imageUrl}
                   latestCollectedAt={l.latestCollectedAt}
                   collectedAt={l.collectedAt}
                 />

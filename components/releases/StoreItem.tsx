@@ -4,6 +4,7 @@ type StoreItemProps = {
   name: string
   title: string
   url: string
+  imageUrl?: string | null
   collectedAt?: string | null
   latestCollectedAt?: string | null
 }
@@ -12,6 +13,7 @@ export function StoreItem({
   name,
   title,
   url,
+  imageUrl,
   collectedAt,
   latestCollectedAt,
 }: StoreItemProps) {
@@ -27,10 +29,38 @@ export function StoreItem({
       rel="noreferrer"
       className="block rounded-xl border p-4 hover:bg-gray-50"
     >
-      <div className="text-sm text-gray-500">{name}</div>
-      <div className="mt-1 font-medium">{title}</div>
-      <div className="mt-2 text-sm text-gray-600">
-        Collected: {collectedText}
+      <div className="flex gap-4">
+        {/* 왼쪽: 판매처 이미지 */}
+        <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg border bg-white">
+          {imageUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={imageUrl}
+              alt={`${name} icon`}
+              className="h-full w-full object-contain p-2"
+              loading="lazy"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center text-xs text-gray-400">
+              -
+            </div>
+          )}
+        </div>
+
+        {/* 오른쪽: 텍스트 */}
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center justify-between gap-2">
+            <div className="font-medium">{name}</div>
+
+            <span className="text-sm text-red-600 hover:underline">
+              판매처로 이동
+            </span>
+          </div>
+
+          <div className="mt-1 text-sm text-gray-600 line-clamp-2">{title}</div>
+
+          <div className="mt-2 text-xs text-gray-500">수집: {collectedText}</div>
+        </div>
       </div>
     </a>
   )

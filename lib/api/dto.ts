@@ -1,4 +1,4 @@
-export type Listing = {
+export type ListingDto = {
   id: string
   sourceName: string
   sourceProductTitle: string
@@ -8,13 +8,13 @@ export type Listing = {
   latestCollectedAt?: string | null
 }
 
-export type Release = {
+export type ReleaseDto = {
   id: string
   artistName: string
   albumTitle: string
   coverImageUrl?: string
   storesCount: number
-  listings: Listing[]
+  listings: ListingDto[]
   collectedAt?: string | null
   latestCollectedAt?: string | null
 }

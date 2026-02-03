@@ -34,9 +34,6 @@ export default function RootLayout({
             <Link href="/" className="font-medium">
               Home
             </Link>
-            <Link href="/admin">
-              Admin
-            </Link>
           </nav>
         </header>
 

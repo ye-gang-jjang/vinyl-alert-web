@@ -1,73 +1,20 @@
-"use client"
+import { notFound } from "next/navigation"
+import AdminClient from "./AdminClient"
 
-import { useEffect, useState } from "react"
-import type { Release } from "@/lib/types"
-import { fetchNewReleases } from "@/lib/api"
-import { CreateReleaseForm } from "@/components/admin/CreateReleaseForm"
-import { AddListingForm } from "@/components/admin/AddListingForm"
-import { CreateStoreForm } from "@/components/admin/CreateStoreForm"
+type PageProps = {
+  searchParams: Promise<{ key?: string }>
+}
 
-export default function AdminPage() {
-  const [status, setStatus] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
+export default async function AdminPage({ searchParams }: PageProps) {
+  const sp = await searchParams
+  const key = sp.key
 
-  const [releases, setReleases] = useState<Release[]>([])
-  const [selectedReleaseId, setSelectedReleaseId] = useState("")
+  const ADMIN_KEY = process.env.ADMIN_KEY
 
-  async function refreshReleases() {
-    setIsLoading(true)
-    try {
-      const data = await fetchNewReleases()
-      setReleases(data)
-      if (!selectedReleaseId && data.length > 0) {
-        setSelectedReleaseId(data[0].id)
-      }
-    } finally {
-      setIsLoading(false)
-    }
+  // ADMIN_KEY가 설정 안 됐거나, key가 다르면 숨김
+  if (!ADMIN_KEY || key !== ADMIN_KEY) {
+    notFound()
   }
 
-  useEffect(() => {
-    refreshReleases().catch(() => {})
-  }, [])
-
-  return (
-    <div className="space-y-10">
-      <header className="space-y-2">
-        <h1 className="text-2xl font-bold">관리자</h1>
-        <p className="text-sm text-gray-600">
-          MVP 단계: 수동으로 릴리즈/판매처 정보를 등록함
-        </p>
-      </header>
-
-      {/* 릴리즈 등록 */}
-      <CreateReleaseForm
-        setStatus={setStatus}
-        setGlobalLoading={setIsLoading}
-        onCreated={async (createdId) => {
-          await refreshReleases()
-          setSelectedReleaseId(createdId)
-        }}
-      />
-
-      {/* ✅ 스토어 등록 */}
-      <CreateStoreForm
-        setStatus={setStatus}
-        setGlobalLoading={setIsLoading}
-      />
-
-      {/* 판매처(Listing) 등록 */}
-      <AddListingForm
-        releases={releases}
-        selectedReleaseId={selectedReleaseId}
-        onSelectReleaseId={setSelectedReleaseId}
-        onRefreshReleases={refreshReleases}
-        isLoadingGlobal={isLoading}
-        setGlobalLoading={setIsLoading}
-        setStatus={setStatus}
-      />
-
-      {status && <p className="text-sm font-medium">{status}</p>}
-    </div>
-  )
+  return <AdminClient />
 }

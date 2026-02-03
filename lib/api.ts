@@ -1,4 +1,6 @@
-import type { Release } from "./types";
+import type { Release } from "./types"
+import type { ListingDto, ReleaseDto } from "@/lib/api/dto"
+import { mapListingDto, mapReleaseDto } from "@/lib/api/mappers"
 
 /**
  * API Base URL
@@ -6,14 +8,14 @@ import type { Release } from "./types";
  * - 로컬 개발: fallback으로 localhost 사용
  */
 const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000"
 
 /**
  * URL을 안전하게 합치는 유틸
  * (base 끝에 / 있든 없든 문제 없게)
  */
 function joinUrl(base: string, path: string) {
-  return `${base.replace(/\/$/, "")}${path}`;
+  return `${base.replace(/\/$/, "")}${path}`
 }
 
 /* =========================
@@ -23,25 +25,27 @@ function joinUrl(base: string, path: string) {
 export async function fetchNewReleases(): Promise<Release[]> {
   const res = await fetch(joinUrl(API_BASE, "/releases"), {
     cache: "no-store",
-  });
+  })
 
   if (!res.ok) {
-    throw new Error("Failed to fetch releases");
+    throw new Error("Failed to fetch releases")
   }
 
-  return res.json();
+  const data: ReleaseDto[] = await res.json()
+  return Array.isArray(data) ? data.map(mapReleaseDto) : []
 }
 
 export async function fetchReleaseById(id: string): Promise<Release | null> {
   const res = await fetch(joinUrl(API_BASE, `/releases/${id}`), {
     cache: "no-store",
-  });
+  })
 
   if (!res.ok) {
-    return null;
+    return null
   }
 
-  return res.json();
+  const data: ReleaseDto = await res.json()
+  return mapReleaseDto(data)
 }
 
 /**
@@ -51,8 +55,8 @@ export async function fetchReleaseById(id: string): Promise<Release | null> {
 export async function fetchReleasesByArtistName(
   artistName: string
 ): Promise<Release[]> {
-  const releases = await fetchNewReleases();
-  return releases.filter((r) => r.artistName === artistName);
+  const releases = await fetchNewReleases()
+  return releases.filter((r) => r.artistName === artistName)
 }
 
 /* =========================
@@ -60,10 +64,10 @@ export async function fetchReleasesByArtistName(
    ========================= */
 
 export type CreateReleasePayload = {
-  artistName: string;
-  albumTitle: string;
-  coverImageUrl?: string;
-};
+  artistName: string
+  albumTitle: string
+  coverImageUrl?: string
+}
 
 export async function createRelease(payload: CreateReleasePayload) {
   const res = await fetch(joinUrl(API_BASE, "/releases"), {
@@ -72,18 +76,20 @@ export async function createRelease(payload: CreateReleasePayload) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(payload),
-  });
+  })
 
   if (!res.ok) {
-    throw new Error("Failed to create release");
+    throw new Error("Failed to create release")
   }
 
-  return res.json();
+  const data: ReleaseDto = await res.json()
+  return mapReleaseDto(data)
 }
 
 /* =========================
    Listing 생성
    ========================= */
+
 export type CreateListingPayload = {
   storeSlug: string
   sourceProductTitle: string
@@ -109,12 +115,14 @@ export async function addListingToRelease(
     throw new Error("Failed to add listing")
   }
 
-  return res.json()
+  const data: ListingDto = await res.json()
+  return mapListingDto(data)
 }
 
 /* =========================
    Stores (Admin)
    ========================= */
+
 export type Store = {
   id: string
   name: string

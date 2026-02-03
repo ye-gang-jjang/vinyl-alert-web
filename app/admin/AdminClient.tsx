@@ -9,6 +9,7 @@ import { CreateStoreForm } from "@/components/admin/CreateStoreForm";
 import { ManageReleaseListings } from "@/components/admin/ManageReleaseListings";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { StoreList } from "@/components/admin/StoreList";
 
 export default function AdminClient() {
   const [status, setStatus] = useState<string | null>(null);
@@ -130,6 +131,7 @@ export default function AdminClient() {
             setStatus={setStatus}
             setGlobalLoading={setIsLoading}
           />
+          <StoreList isLoadingGlobal={isLoading} setStatus={setStatus} />
         </TabsContent>
       </Tabs>
 

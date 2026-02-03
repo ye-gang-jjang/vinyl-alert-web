@@ -124,6 +124,15 @@ export default function AdminClient() {
             setStatus={setStatus}
           />
         </TabsContent>
+
+        {/* 3) 스토어 관리: 스토어 등록 */}
+        <TabsContent value="stores" className="space-y-10">
+          <CreateStoreForm
+            setStatus={setStatus}
+            setGlobalLoading={setIsLoading}
+          />
+          <StoreList isLoadingGlobal={isLoading} setStatus={setStatus} />
+        </TabsContent>
       </Tabs>
 
       {status && <p className="text-sm font-medium">{status}</p>}

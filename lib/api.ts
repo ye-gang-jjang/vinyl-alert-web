@@ -151,3 +151,19 @@ export async function createStore(payload: CreateStorePayload) {
   if (!res.ok) throw new Error("Failed to create store")
   return res.json()
 }
+
+export async function deleteListing(releaseId: string, listingId: string) {
+  const res = await fetch(
+    joinUrl(API_BASE, `/releases/${releaseId}/listings/${listingId}`),
+    {
+      method: "DELETE",
+    }
+  )
+
+  if (!res.ok) {
+    throw new Error("Failed to delete listing")
+  }
+
+  // 백엔드가 body 없이 204를 줄 수도 있으니 안전하게 처리
+  return true
+}

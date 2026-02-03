@@ -86,6 +86,19 @@ export async function createRelease(payload: CreateReleasePayload) {
   return mapReleaseDto(data)
 }
 
+export async function deleteRelease(releaseId: string) {
+  const res = await fetch(joinUrl(API_BASE, `/releases/${releaseId}`), {
+    method: "DELETE",
+  })
+
+  if (!res.ok) {
+    throw new Error("Failed to delete release")
+  }
+
+  return true
+}
+
+
 /* =========================
    Listing 생성
    ========================= */

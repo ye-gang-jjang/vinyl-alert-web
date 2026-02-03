@@ -161,7 +161,12 @@ export async function createStore(payload: CreateStorePayload) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   })
-  if (!res.ok) throw new Error("Failed to create store")
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => "")
+    throw new Error(`스토어 생성 실패 (${res.status})${body ? `: ${body}` : ""}`)
+  }
+
   return res.json()
 }
 

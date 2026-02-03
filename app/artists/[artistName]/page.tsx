@@ -26,8 +26,7 @@ export default async function ArtistPage({ params }: PageProps) {
             album={r.albumTitle}
             coverImageUrl={r.coverImageUrl}
             storesCount={r.storesCount}
-            latestCollectedAt={r.latestCollectedAt}
-            collectedAt={r.collectedAt}
+            latestCollectedAt={r.latestCollectedAt ?? null}
           />
         ))}
       </section>

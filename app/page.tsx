@@ -20,13 +20,31 @@ type SearchParams = {
 export default async function HomePage({
   searchParams,
 }: {
-  // ✅ Next 버전에 따라 Promise일 수 있어서 Promise로 받는 게 안전
   searchParams: Promise<SearchParams>
 }) {
-  // ✅ 핵심: await
   const sp = await searchParams
 
-  const releases = await fetchNewReleases()
+  let releases = []
+  try {
+    releases = await fetchNewReleases()
+  } catch {
+    return (
+      <div className="space-y-6">
+        <header className="space-y-2">
+          <h1 className="text-2xl font-bold">Vinyl Alert</h1>
+          <p className="text-sm text-gray-600">
+            최근 수집된 LP 판매처 정보를 모아봅니다.
+          </p>
+        </header>
+
+        <div className="rounded-xl border border-red-200 bg-red-50 p-6">
+          <p className="text-sm text-red-700">
+            데이터를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.
+          </p>
+        </div>
+      </div>
+    )
+  }
 
   const selectedSort = (sp.sort as SortKey) || "default"
   const selectedArtist = sp.artist ?? ""
@@ -61,10 +79,20 @@ export default async function HomePage({
   return (
     <div className="space-y-6">
       <header className="space-y-2">
-        <h1 className="text-2xl font-bold">New Releases</h1>
+        <h1 className="text-2xl font-bold">Vinyl Alert</h1>
         <p className="text-sm text-gray-600">
-          최근 수집된 LP 발매/판매 정보 목록입니다.
+          최근 수집된 LP 판매처 정보를 모아봅니다.
         </p>
+
+        <div className="text-xs text-gray-500">
+          총 {filtered.length}개 릴리즈
+          {(selectedArtist || selectedStore || selectedSort !== "default") && (
+            <>
+              {" "}
+              · 필터/정렬 적용됨
+            </>
+          )}
+        </div>
       </header>
 
       <ReleaseControls
@@ -75,8 +103,11 @@ export default async function HomePage({
       />
 
       {filtered.length === 0 ? (
-        <div className="rounded-xl border p-6">
-          <p className="text-sm text-gray-600">조건에 맞는 릴리즈가 없습니다.</p>
+        <div className="rounded-xl border p-6 space-y-2">
+          <p className="text-sm font-medium">조건에 맞는 릴리즈가 없습니다.</p>
+          <p className="text-sm text-gray-600">
+            필터를 해제하거나 다른 판매처/아티스트로 바꿔보세요.
+          </p>
         </div>
       ) : (
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -88,8 +119,7 @@ export default async function HomePage({
               album={r.albumTitle}
               coverImageUrl={r.coverImageUrl}
               storesCount={r.storesCount}
-              latestCollectedAt={r.latestCollectedAt}
-              collectedAt={r.collectedAt}
+              latestCollectedAt={r.latestCollectedAt ?? null}
             />
           ))}
         </section>

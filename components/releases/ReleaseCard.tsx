@@ -7,7 +7,6 @@ type ReleaseCardProps = {
   album: string
   coverImageUrl?: string
   storesCount: number
-  collectedAt?: string | null
   latestCollectedAt?: string | null
 }
 
@@ -17,12 +16,10 @@ export function ReleaseCard({
   album,
   coverImageUrl,
   storesCount,
-  collectedAt,
   latestCollectedAt,
 }: ReleaseCardProps) {
   const collectedText = formatCollectedAgo({
     latestCollectedAt,
-    collectedAt,
   })
 
   return (
@@ -55,7 +52,7 @@ export function ReleaseCard({
           </div>
 
           <div className="mt-2 text-xs text-gray-500">
-            판매처 {storesCount}개 · 최근 수집: {collectedText}
+            판매처 {storesCount} · 최근 수집: {collectedText}
           </div>
         </div>
       </div>

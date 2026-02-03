@@ -1,41 +1,21 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import type { Store } from "@/lib/api"
-import { fetchStores, deleteStore } from "@/lib/api"
+import { deleteStore } from "@/lib/api"
 
 type Props = {
+  stores: Store[]
+  onChanged: () => Promise<void>
   isLoadingGlobal?: boolean
   setStatus?: (msg: string | null) => void
 }
 
-export function StoreList({ isLoadingGlobal, setStatus }: Props) {
-  const [stores, setStores] = useState<Store[]>([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-
-  async function refresh() {
-    setIsLoading(true)
-    setError(null)
-    try {
-      const data = await fetchStores()
-      setStores(data)
-      setStatus?.(null)
-    } catch (e) {
-      const msg =
-        e instanceof Error ? e.message : "스토어 목록을 불러오지 못했습니다."
-      setError(msg)
-      setStatus?.(`❌ 스토어 목록 로드 실패: ${msg}`)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    refresh().catch(() => {})
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
+export function StoreList({
+  stores,
+  onChanged,
+  isLoadingGlobal,
+  setStatus,
+}: Props) {
   async function onDelete(store: Store) {
     const ok = window.confirm(
       `"${store.name}" 스토어를 삭제할까요?\n(이 작업은 되돌릴 수 없습니다.)`
@@ -43,17 +23,14 @@ export function StoreList({ isLoadingGlobal, setStatus }: Props) {
     if (!ok) return
 
     setStatus?.(null)
-    setIsLoading(true)
 
     try {
       await deleteStore(store.id)
       setStatus?.(`✅ 스토어 삭제 완료: ${store.name}`)
-      await refresh()
+      await onChanged()
     } catch (e) {
       const msg = e instanceof Error ? e.message : "스토어 삭제 실패"
       setStatus?.(`❌ 스토어 삭제 실패: ${msg}`)
-    } finally {
-      setIsLoading(false)
     }
   }
 
@@ -63,27 +40,21 @@ export function StoreList({ isLoadingGlobal, setStatus }: Props) {
         <div>
           <h3 className="text-sm font-semibold">등록된 스토어</h3>
           <p className="text-xs text-gray-500">
-            listingCount가 0인 스토어만 삭제 가능합니다.
+            listingsCount가 0인 스토어만 삭제 가능합니다.
           </p>
         </div>
 
         <button
           type="button"
           className="rounded-lg border px-3 py-2 text-sm hover:bg-gray-50 disabled:opacity-50"
-          onClick={() => refresh()}
-          disabled={isLoading || isLoadingGlobal}
+          onClick={() => onChanged()}
+          disabled={isLoadingGlobal}
         >
-          {isLoading ? "불러오는 중..." : "새로고침"}
+          새로고침
         </button>
       </div>
 
-      {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-          {error}
-        </div>
-      )}
-
-      {stores.length === 0 && !error ? (
+      {stores.length === 0 ? (
         <div className="rounded-lg border p-3 text-sm text-gray-600">
           아직 등록된 스토어가 없습니다.
         </div>
@@ -134,7 +105,7 @@ export function StoreList({ isLoadingGlobal, setStatus }: Props) {
                         ? "shrink-0 rounded-md border border-red-300 bg-white px-3 py-1 text-xs text-red-700 hover:bg-red-50"
                         : "shrink-0 rounded-md border px-3 py-1 text-xs text-gray-400 bg-gray-50 cursor-not-allowed"
                     }
-                    disabled={!canDelete || isLoading || isLoadingGlobal}
+                    disabled={!canDelete || isLoadingGlobal}
                     onClick={() => onDelete(s)}
                     title={
                       canDelete

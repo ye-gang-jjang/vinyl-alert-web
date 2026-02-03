@@ -1,15 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
 import type { Release } from "@/lib/types";
-import { fetchNewReleases } from "@/lib/api";
+import { fetchNewReleases, fetchStores } from "@/lib/api";
+import type { Store } from "@/lib/api";
+
 import { CreateReleaseForm } from "@/components/admin/CreateReleaseForm";
 import { AddListingForm } from "@/components/admin/AddListingForm";
 import { CreateStoreForm } from "@/components/admin/CreateStoreForm";
 import { ManageReleaseListings } from "@/components/admin/ManageReleaseListings";
+import { StoreList } from "@/components/admin/StoreList";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { StoreList } from "@/components/admin/StoreList";
 
 export default function AdminClient() {
   const [status, setStatus] = useState<string | null>(null);
@@ -19,6 +22,8 @@ export default function AdminClient() {
 
   const [releases, setReleases] = useState<Release[]>([]);
   const [selectedReleaseId, setSelectedReleaseId] = useState("");
+
+  const [stores, setStores] = useState<Store[]>([]);
 
   async function refreshReleases(): Promise<void> {
     setIsLoading(true);
@@ -46,8 +51,26 @@ export default function AdminClient() {
     }
   }
 
+  async function refreshStores(): Promise<void> {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const data = await fetchStores();
+      setStores(data);
+    } catch (e) {
+      const msg =
+        e instanceof Error ? e.message : "스토어 목록을 불러오지 못했습니다.";
+      setError(msg);
+      setStatus(`오류: ${msg}`);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   useEffect(() => {
     refreshReleases();
+    refreshStores();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -125,13 +148,20 @@ export default function AdminClient() {
           />
         </TabsContent>
 
-        {/* 3) 스토어 관리: 스토어 등록 */}
+        {/* 3) 스토어 관리: 스토어 등록 + 스토어 목록 */}
         <TabsContent value="stores" className="space-y-10">
           <CreateStoreForm
             setStatus={setStatus}
             setGlobalLoading={setIsLoading}
+            onCreated={refreshStores}
           />
-          <StoreList isLoadingGlobal={isLoading} setStatus={setStatus} />
+
+          <StoreList
+            stores={stores}
+            onChanged={refreshStores}
+            isLoadingGlobal={isLoading}
+            setStatus={setStatus}
+          />
         </TabsContent>
       </Tabs>
 

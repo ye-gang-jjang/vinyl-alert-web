@@ -1,40 +1,30 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { createStore, fetchStores } from "@/lib/api"
+import { useState } from "react"
+import { createStore } from "@/lib/api"
 
 type Props = {
   setStatus: (v: string | null) => void
   setGlobalLoading: (v: boolean) => void
-}
-
-type Store = {
-  id: string
-  name: string
-  slug: string
-  iconUrl: string
+  onCreated?: () => Promise<void>
 }
 
 function toSlug(value: string) {
   return value.trim().toLowerCase().replace(/\s+/g, "")
 }
 
-export function CreateStoreForm({ setStatus, setGlobalLoading }: Props) {
-  const [stores, setStores] = useState<Store[]>([])
+export function CreateStoreForm({
+  setStatus,
+  setGlobalLoading,
+  onCreated,
+}: Props) {
   const [name, setName] = useState("")
   const [slug, setSlug] = useState("")
   const [iconUrl, setIconUrl] = useState("/store-icons/")
 
-  async function refreshStores() {
-    const data = await fetchStores()
-    setStores(data)
-  }
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault()
 
-  useEffect(() => {
-    refreshStores().catch(() => {})
-  }, [])
-
-  async function onSubmit() {
     if (!name.trim()) {
       setStatus("스토어 이름을 입력해줘.")
       return
@@ -50,22 +40,25 @@ export function CreateStoreForm({ setStatus, setGlobalLoading }: Props) {
 
     setGlobalLoading(true)
     setStatus(null)
+
     try {
-      await createStore({ name, slug, iconUrl })
-      setStatus("스토어가 등록됐어.")
+      await createStore({ name: name.trim(), slug: slug.trim(), iconUrl: iconUrl.trim() })
+      setStatus("✅ 스토어가 등록됐어.")
+
       setName("")
       setSlug("")
       setIconUrl("/store-icons/")
-      await refreshStores()
+
+      await onCreated?.()
     } catch (e) {
-      setStatus("스토어 등록에 실패했어. slug 중복인지 확인해줘.")
+      setStatus("❌ 스토어 등록에 실패했어. slug 중복인지 확인해줘.")
     } finally {
       setGlobalLoading(false)
     }
   }
 
   return (
-    <section className="space-y-4 rounded-lg border p-4">
+    <form onSubmit={onSubmit} className="space-y-4 rounded-lg border p-4">
       <header className="space-y-1">
         <h2 className="text-lg font-semibold">스토어 등록</h2>
         <p className="text-sm text-gray-600">
@@ -79,7 +72,8 @@ export function CreateStoreForm({ setStatus, setGlobalLoading }: Props) {
           className="rounded-md border px-3 py-2 text-sm"
           value={name}
           onChange={(e) => {
-            setName(e.target.value)
+            const nextName = e.target.value
+            setName(nextName)
           }}
           placeholder="예: 서울 바이닐"
         />
@@ -90,9 +84,12 @@ export function CreateStoreForm({ setStatus, setGlobalLoading }: Props) {
         <input
           className="rounded-md border px-3 py-2 text-sm"
           value={slug}
-          onChange={(e) => setSlug(e.target.value)}
+          onChange={(e) => setSlug(toSlug(e.target.value))}
           placeholder="예: seoulvinyl"
         />
+        <p className="text-xs text-gray-500">
+          영문 소문자/숫자 권장. 등록 후 변경하기 어려움.
+        </p>
       </div>
 
       <div className="grid gap-2">
@@ -106,11 +103,11 @@ export function CreateStoreForm({ setStatus, setGlobalLoading }: Props) {
       </div>
 
       <button
-        onClick={onSubmit}
+        type="submit"
         className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white"
       >
         등록
       </button>
-    </section>
+    </form>
   )
 }

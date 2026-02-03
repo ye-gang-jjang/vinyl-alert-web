@@ -111,20 +111,6 @@ export function CreateStoreForm({ setStatus, setGlobalLoading }: Props) {
       >
         등록
       </button>
-
-      <div className="space-y-2">
-        <h3 className="text-sm font-semibold">등록된 스토어</h3>
-        <ul className="space-y-1 text-sm text-gray-700">
-          {stores.map((s) => (
-            <li key={s.id}>
-              {s.name} <span className="text-gray-500">({s.slug})</span>
-            </li>
-          ))}
-          {stores.length === 0 && (
-            <li className="text-gray-500">아직 등록된 스토어가 없어.</li>
-          )}
-        </ul>
-      </div>
     </section>
   )
 }

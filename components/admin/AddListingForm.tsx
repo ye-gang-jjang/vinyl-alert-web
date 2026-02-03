@@ -234,7 +234,7 @@ export function AddListingForm({
                     setGlobalLoading?.(true)
 
                     try {
-                      await deleteListing(selectedReleaseId, l.id)
+                      await await deleteListing(l.id)
                       setStatus?.("✅ 판매처를 삭제했습니다.")
                       await onRefreshReleases()
                     } catch (err: unknown) {

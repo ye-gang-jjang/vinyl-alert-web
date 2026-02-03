@@ -141,6 +141,7 @@ export type Store = {
   name: string
   slug: string
   iconUrl: string
+  listingsCount: number
 }
 
 export type CreateStorePayload = {
@@ -180,4 +181,17 @@ export async function deleteListing(listingId: string) {
   }
 
   return true
+}
+
+export async function deleteStore(storeId: string) {
+  const res = await fetch(joinUrl(API_BASE, `/stores/${storeId}`), {
+    method: "DELETE",
+  })
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => "")
+    throw new Error(
+      `Failed to delete store (${res.status})${body ? `: ${body}` : ""}`
+    )
+  }
 }

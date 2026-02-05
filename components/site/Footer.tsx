@@ -1,7 +1,6 @@
 import Link from "next/link"
+import { SITE_NAME, TAGLINE } from "@/components/site/constants"
 
-const SITE_NAME = "Vinyl Alert"
-const TAGLINE = "최근 수집된 LP 판매처 정보를 모아봅니다."
 const CONTACT_EMAIL =
   process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "yeggang0602@gmail.com"
 
@@ -30,16 +29,15 @@ export function Footer() {
 
           {/* Right */}
           <div className="flex flex-col gap-2 text-sm text-gray-600 sm:items-end">
-            {/* 필요하면 나중에 링크만 살리면 됨 */}
             <div className="flex gap-4">
               <Link href="/" className="hover:underline">
                 Home
               </Link>
-              {/* <Link href="/about" className="hover:underline">About</Link> */}
-              {/* <Link href="/privacy" className="hover:underline">Privacy</Link> */}
             </div>
 
-            <div className="text-xs text-gray-500">© {year} {SITE_NAME}</div>
+            <div className="text-xs text-gray-500">
+              © {year} {SITE_NAME}
+            </div>
           </div>
         </div>
       </div>

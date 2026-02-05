@@ -1,32 +1,32 @@
-export const dynamic = "force-dynamic"
-export const revalidate = 0
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
-import { fetchNewReleases } from "@/lib/api"
-import { ReleaseCard } from "@/components/releases/ReleaseCard"
-import ReleaseControls from "@/components/releases/ReleaseControls"
+import { fetchNewReleases } from "@/lib/api";
+import { ReleaseCard } from "@/components/releases/ReleaseCard";
+import ReleaseControls from "@/components/releases/ReleaseControls";
 
-type SortKey = "default" | "artist_asc" | "album_asc"
+type SortKey = "default" | "artist_asc" | "album_asc";
 
 function uniqSorted(arr: string[]) {
-  return Array.from(new Set(arr)).sort((a, b) => a.localeCompare(b))
+  return Array.from(new Set(arr)).sort((a, b) => a.localeCompare(b));
 }
 
 type SearchParams = {
-  sort?: string
-  artist?: string
-  store?: string
-}
+  sort?: string;
+  artist?: string;
+  store?: string;
+};
 
 export default async function HomePage({
   searchParams,
 }: {
-  searchParams: Promise<SearchParams>
+  searchParams: Promise<SearchParams>;
 }) {
-  const sp = await searchParams
+  const sp = await searchParams;
 
-  let releases = []
+  let releases = [];
   try {
-    releases = await fetchNewReleases()
+    releases = await fetchNewReleases();
   } catch {
     return (
       <div className="space-y-6">
@@ -43,37 +43,37 @@ export default async function HomePage({
           </p>
         </div>
       </div>
-    )
+    );
   }
 
-  const selectedSort = (sp.sort as SortKey) || "default"
-  const selectedArtist = sp.artist ?? ""
-  const selectedStore = sp.store ?? ""
+  const selectedSort = (sp.sort as SortKey) || "default";
+  const selectedArtist = sp.artist ?? "";
+  const selectedStore = sp.store ?? "";
 
-  const artists = uniqSorted(releases.map((r) => r.artistName))
+  const artists = uniqSorted(releases.map((r) => r.artistName));
 
   // 1) 필터
-  let filtered = releases
+  let filtered = releases;
 
   if (selectedArtist) {
-    filtered = filtered.filter((r) => r.artistName === selectedArtist)
+    filtered = filtered.filter((r) => r.artistName === selectedArtist);
   }
 
   if (selectedStore) {
     filtered = filtered.filter((r) =>
-      r.listings?.some((l) => l.sourceName === selectedStore)
-    )
+      r.listings?.some((l) => l.sourceName === selectedStore),
+    );
   }
 
   // 2) 정렬
   if (selectedSort === "artist_asc") {
     filtered = [...filtered].sort((a, b) =>
-      a.artistName.localeCompare(b.artistName)
-    )
+      a.artistName.localeCompare(b.artistName),
+    );
   } else if (selectedSort === "album_asc") {
     filtered = [...filtered].sort((a, b) =>
-      a.albumTitle.localeCompare(b.albumTitle)
-    )
+      a.albumTitle.localeCompare(b.albumTitle),
+    );
   }
 
   return (
@@ -85,11 +85,24 @@ export default async function HomePage({
         selectedSort={selectedSort}
       />
 
+      {/* ✅ 결과 요약 */}
+      <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:justify-between text-sm text-gray-600">
+        <span className="min-w-0">
+          총{" "}
+          <span className="font-medium text-gray-900">{filtered.length}</span>개
+          릴리즈
+        </span>
+
+        {(selectedArtist || selectedStore || selectedSort !== "default") && (
+          <span className="text-xs text-gray-500">필터/정렬 적용됨</span>
+        )}
+      </div>
+
       {filtered.length === 0 ? (
         <div className="rounded-xl border p-6 space-y-2">
           <p className="text-sm font-medium">조건에 맞는 릴리즈가 없습니다.</p>
           <p className="text-sm text-gray-600">
-            필터를 해제하거나 다른 판매처/아티스트로 바꿔보세요.
+            필터를 초기화하거나 다른 조건으로 다시 검색해보세요.
           </p>
         </div>
       ) : (
@@ -108,5 +121,5 @@ export default async function HomePage({
         </section>
       )}
     </div>
-  )
+  );
 }

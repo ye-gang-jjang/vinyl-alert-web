@@ -25,7 +25,7 @@ export function ReleaseCard({
   return (
     <Link
       href={`/releases/${id}`}
-      className="block rounded-xl border bg-white transition hover:bg-gray-50"
+      className="block rounded-xl border bg-white transition hover:bg-gray-50 hover:-translate-y-0.5 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-300"
     >
       <div className="flex gap-4 p-4">
         {/* Cover image */}

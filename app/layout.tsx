@@ -28,11 +28,12 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-dvh flex flex-col`}
       >
         <Header />
 
-        <main className="mx-auto max-w-5xl p-4">{children}</main>
+        {/* ✅ main이 남는 공간을 차지해서 footer가 아래로 밀림 */}
+        <main className="mx-auto w-full max-w-5xl flex-1 p-4">{children}</main>
 
         <Footer />
       </body>

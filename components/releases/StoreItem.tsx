@@ -6,7 +6,6 @@ type StoreItemProps = {
   url: string
   imageUrl?: string | null
   collectedAt?: string | null
-  latestCollectedAt?: string | null
 }
 
 export function StoreItem({
@@ -15,19 +14,15 @@ export function StoreItem({
   url,
   imageUrl,
   collectedAt,
-  latestCollectedAt,
 }: StoreItemProps) {
-  const collectedText = formatCollectedAgo({
-    latestCollectedAt,
-    collectedAt,
-  })
+  const collectedText = formatCollectedAgo({ collectedAt })
 
   return (
     <a
       href={url}
       target="_blank"
       rel="noreferrer"
-      className="block rounded-xl border p-4 hover:bg-gray-50"
+      className="block rounded-xl border p-4 transition hover:bg-gray-50 hover:shadow-sm"
     >
       <div className="flex gap-4">
         {/* 왼쪽: 판매처 이미지 */}
@@ -50,16 +45,20 @@ export function StoreItem({
         {/* 오른쪽: 텍스트 */}
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-2">
-            <div className="font-medium">{name}</div>
+            <div className="truncate font-medium">{name}</div>
 
-            <span className="text-sm text-red-600 hover:underline">
+            <span className="shrink-0 text-sm text-red-600 hover:underline">
               판매처로 이동
             </span>
           </div>
 
-          <div className="mt-1 text-sm text-gray-600 line-clamp-2">{title}</div>
+          <div className="mt-1 line-clamp-2 text-sm text-gray-600">
+            {title}
+          </div>
 
-          <div className="mt-2 text-xs text-gray-500">수집: {collectedText}</div>
+          <div className="mt-2 text-xs text-gray-500">
+            수집: {collectedText}
+          </div>
         </div>
       </div>
     </a>

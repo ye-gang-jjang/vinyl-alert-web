@@ -23,7 +23,13 @@ export function StoreItem({
       target="_blank"
       rel="noreferrer"
       title="새 탭에서 열기"
-      className="block rounded-xl border p-4 transition hover:bg-gray-50 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-300"
+        className="
+            block rounded-xl border p-4
+            transition-all
+            hover:bg-gray-50 hover:shadow-sm
+            active:scale-[0.98] active:bg-gray-100
+            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-300
+        "
     >
       <div className="flex gap-4">
         {/* 왼쪽: 판매처 이미지 */}

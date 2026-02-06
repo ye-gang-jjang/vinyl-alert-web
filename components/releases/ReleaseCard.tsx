@@ -1,14 +1,14 @@
-import Link from "next/link"
-import { formatCollectedAgo } from "@/lib/formatters/formatCollectedAgo"
+import Link from "next/link";
+import { formatCollectedAgo } from "@/lib/formatters/formatCollectedAgo";
 
 type ReleaseCardProps = {
-  id: string
-  artist: string
-  album: string
-  coverImageUrl?: string
-  storesCount: number
-  latestCollectedAt?: string | null
-}
+  id: string;
+  artist: string;
+  album: string;
+  coverImageUrl?: string;
+  storesCount: number;
+  latestCollectedAt?: string | null;
+};
 
 export function ReleaseCard({
   id,
@@ -20,12 +20,18 @@ export function ReleaseCard({
 }: ReleaseCardProps) {
   const collectedText = formatCollectedAgo({
     latestCollectedAt,
-  })
+  });
 
   return (
     <Link
       href={`/releases/${id}`}
-      className="block rounded-xl border bg-white transition hover:bg-gray-50 hover:-translate-y-0.5 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-300"
+      className="
+        block rounded-xl border bg-white
+        transition-all
+        hover:bg-gray-50 hover:shadow-sm
+        active:scale-[0.98] active:bg-gray-100
+        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-300
+      "
     >
       <div className="flex gap-4 p-4">
         {/* Cover image */}
@@ -57,5 +63,5 @@ export function ReleaseCard({
         </div>
       </div>
     </Link>
-  )
+  );
 }

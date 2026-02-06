@@ -48,7 +48,7 @@ export function StoreItem({
             <div className="truncate font-medium">{name}</div>
 
             <span className="shrink-0 text-sm text-red-600 hover:underline">
-              판매처로 이동
+              판매처로 이동 ↗
             </span>
           </div>
 

@@ -1,12 +1,12 @@
-import { formatCollectedAgo } from "@/lib/formatters/formatCollectedAgo"
+import { formatCollectedAgo } from "@/lib/formatters/formatCollectedAgo";
 
 type StoreItemProps = {
-  name: string
-  title: string
-  url: string
-  imageUrl?: string | null
-  collectedAt?: string | null
-}
+  name: string;
+  title: string;
+  url: string;
+  imageUrl?: string | null;
+  collectedAt?: string | null;
+};
 
 export function StoreItem({
   name,
@@ -15,14 +15,15 @@ export function StoreItem({
   imageUrl,
   collectedAt,
 }: StoreItemProps) {
-  const collectedText = formatCollectedAgo({ collectedAt })
+  const collectedText = formatCollectedAgo({ collectedAt });
 
   return (
     <a
       href={url}
       target="_blank"
       rel="noreferrer"
-      className="block rounded-xl border p-4 transition hover:bg-gray-50 hover:shadow-sm"
+      title="새 탭에서 열기"
+      className="block rounded-xl border p-4 transition hover:bg-gray-50 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-300"
     >
       <div className="flex gap-4">
         {/* 왼쪽: 판매처 이미지 */}
@@ -47,14 +48,13 @@ export function StoreItem({
           <div className="flex items-center justify-between gap-2">
             <div className="truncate font-medium">{name}</div>
 
-            <span className="shrink-0 text-sm text-red-600 hover:underline">
-              판매처로 이동 ↗
+            <span className="shrink-0 inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50">
+              판매처로 이동
+              <span aria-hidden>↗</span>
             </span>
           </div>
 
-          <div className="mt-1 line-clamp-2 text-sm text-gray-600">
-            {title}
-          </div>
+          <div className="mt-1 line-clamp-2 text-sm text-gray-600">{title}</div>
 
           <div className="mt-2 text-xs text-gray-500">
             수집: {collectedText}
@@ -62,5 +62,5 @@ export function StoreItem({
         </div>
       </div>
     </a>
-  )
+  );
 }

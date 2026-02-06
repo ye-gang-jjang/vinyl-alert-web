@@ -16,8 +16,18 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Vinyl Alert",
-  description: "LP release tracker",
+  title: "L Pick | 원하는 LP를 한눈에",
+  description:
+    "LP 발매·판매처 정보를 모아 내가 원하는 레코드를 빠르게 찾을 수 있는 서비스",
+  openGraph: {
+    title: "L Pick",
+    description:
+      "LP 발매·판매처 정보를 한눈에. 내가 원하는 LP를 픽하다.",
+    url: "https://www.lpick.shop",
+    siteName: "L Pick",
+    locale: "ko_KR",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

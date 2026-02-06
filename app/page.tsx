@@ -31,7 +31,7 @@ export default async function HomePage({
     return (
       <div className="space-y-6">
         <header className="space-y-2">
-          <h1 className="text-2xl font-bold">Vinyl Alert</h1>
+          <h1 className="text-2xl font-bold">L Pick</h1>
           <p className="text-sm text-gray-600">
             최근 수집된 LP 판매처 정보를 모아봅니다.
           </p>

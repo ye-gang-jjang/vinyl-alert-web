@@ -1,23 +1,25 @@
+import Image from "next/image"
 import Link from "next/link"
-import { SITE_NAME } from "@/components/site/constants"
 
 export function Header() {
   return (
-    <header className="border-b bg-white">
-      <div className="mx-auto flex max-w-5xl items-center gap-6 px-4 py-4">
-        {/* Brand */}
-        <Link href="/" className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg border bg-gray-50" aria-hidden />
-          <span className="text-base font-semibold">{SITE_NAME}</span>
+    <header className="border-b">
+      <nav className="mx-auto flex max-w-5xl items-center gap-4 p-4">
+        {/* 로고 + 서비스명 */}
+        <Link href="/" className="flex items-center gap-2 font-bold text-lg">
+          <Image
+            src="/brand/logo.svg"
+            alt="L Pick"
+            width={28}
+            height={28}
+            priority
+          />
+          <span>L Pick</span>
         </Link>
 
-        {/* Nav (이제 좌측에 붙음) */}
-        <nav className="flex items-center gap-2 text-sm">
-          <Link href="/" className="rounded-md px-2 py-1 hover:bg-gray-50">
-            Home
-          </Link>
-        </nav>
-      </div>
+        {/* 오른쪽 영역(비워둠) */}
+        <div className="ml-auto" />
+      </nav>
     </header>
   )
 }

@@ -1,5 +1,6 @@
 "use client"
 
+import React from "react"
 import { useMemo } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -271,6 +272,3 @@ function StoreComboboxLite({
     </div>
   )
 }
-
-// React.useState 사용 때문에 필요
-import React from "react"

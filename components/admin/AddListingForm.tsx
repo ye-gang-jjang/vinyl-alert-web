@@ -13,6 +13,8 @@ type Store = {
   iconUrl: string
 }
 
+type ListingStatus = "ON_SALE" | "PREORDER" | "SOLD_OUT"
+
 type Props = {
   releases: Release[]
   selectedReleaseId: string
@@ -39,6 +41,10 @@ export function AddListingForm({
 
   const [sourceProductTitle, setSourceProductTitle] = useState("")
   const [url, setUrl] = useState("")
+
+  // ✅ 추가: price/status (Listing 단위)
+  const [price, setPrice] = useState("") // 입력은 문자열로 받고 submit 때 숫자로 변환
+  const [listingStatus, setListingStatus] = useState<ListingStatus>("ON_SALE")
 
   async function refreshStores() {
     try {
@@ -67,16 +73,31 @@ export function AddListingForm({
       if (!selectedReleaseId) throw new Error("대상 릴리즈를 선택해 주세요.")
       if (!storeSlug) throw new Error("스토어를 선택해 주세요.")
 
+      const normalizedPrice =
+        listingStatus === "SOLD_OUT"
+          ? null
+          : price.trim() === ""
+            ? null
+            : Number(price.replaceAll(",", ""))
+
+      if (normalizedPrice !== null && Number.isNaN(normalizedPrice)) {
+        throw new Error("가격은 숫자만 입력해 주세요.")
+      }
+
       const updated = await addListingToRelease(selectedReleaseId, {
         storeSlug,
         sourceProductTitle,
         url,
+        price: normalizedPrice,
+        status: listingStatus,
       })
 
       setStatus?.(`✅ 판매처가 추가됨 (Release ID: ${updated.id})`)
 
       setSourceProductTitle("")
       setUrl("")
+      setPrice("")
+      setListingStatus("ON_SALE")
 
       await onRefreshReleases()
     } catch (err: unknown) {
@@ -169,6 +190,37 @@ export function AddListingForm({
           required
           disabled={isLoading || isLoadingGlobal}
         />
+      </div>
+
+      {/* ✅ 상태 */}
+      <div className="space-y-2">
+        <label className="block text-sm font-medium">상태</label>
+        <select
+          className="w-full rounded-lg border p-2"
+          value={listingStatus}
+          onChange={(e) => setListingStatus(e.target.value as ListingStatus)}
+          disabled={isLoading || isLoadingGlobal}
+        >
+          <option value="ON_SALE">판매중</option>
+          <option value="PREORDER">발매예정</option>
+          <option value="SOLD_OUT">품절</option>
+        </select>
+      </div>
+
+      {/* ✅ 가격 */}
+      <div className="space-y-2">
+        <label className="block text-sm font-medium">가격(원)</label>
+        <input
+          className="w-full rounded-lg border p-2"
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
+          placeholder="예: 39000"
+          inputMode="numeric"
+          disabled={isLoading || isLoadingGlobal || listingStatus === "SOLD_OUT"}
+        />
+        <p className="text-xs text-gray-500">
+          숫자만 입력 (예: 39000). 품절이면 비워도 됨.
+        </p>
       </div>
 
       <button

@@ -1,12 +1,28 @@
-import { formatCollectedAgo } from "@/lib/formatters/formatCollectedAgo";
+import { formatCollectedAgo } from "@/lib/formatters/formatCollectedAgo"
+
+type ListingStatus = "ON_SALE" | "PREORDER" | "SOLD_OUT"
 
 type StoreItemProps = {
-  name: string;
-  title: string;
-  url: string;
-  imageUrl?: string | null;
-  collectedAt?: string | null;
-};
+  name: string
+  title: string
+  url: string
+  imageUrl?: string | null
+  collectedAt?: string | null
+
+  // ✅ 추가
+  price?: number | null
+  status?: ListingStatus | null
+}
+
+function displayMeta(status?: ListingStatus | null, price?: number | null) {
+  const s: ListingStatus = status ?? "ON_SALE"
+
+  if (s === "SOLD_OUT") return "품절"
+  if (s === "PREORDER") {
+    return price ? `발매예정 · ${price.toLocaleString()}원` : "발매예정"
+  }
+  return price ? `판매중 · ${price.toLocaleString()}원` : "판매중 · 가격 정보 없음"
+}
 
 export function StoreItem({
   name,
@@ -14,8 +30,11 @@ export function StoreItem({
   url,
   imageUrl,
   collectedAt,
+  price,
+  status,
 }: StoreItemProps) {
-  const collectedText = formatCollectedAgo({ collectedAt });
+  const collectedText = formatCollectedAgo({ collectedAt })
+  const metaText = displayMeta(status, price)
 
   return (
     <a
@@ -23,13 +42,13 @@ export function StoreItem({
       target="_blank"
       rel="noreferrer"
       title="새 탭에서 열기"
-        className="
-            block rounded-xl border p-4
-            transition-all
-            hover:bg-gray-50 hover:shadow-sm
-            active:scale-[0.98] active:bg-gray-100
-            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-300
-        "
+      className="
+        block rounded-xl border p-4
+        transition-all
+        hover:bg-gray-50 hover:shadow-sm
+        active:scale-[0.98] active:bg-gray-100
+        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-300
+      "
     >
       <div className="flex gap-4">
         {/* 왼쪽: 판매처 이미지 */}
@@ -62,11 +81,13 @@ export function StoreItem({
 
           <div className="mt-1 line-clamp-2 text-sm text-gray-600">{title}</div>
 
-          <div className="mt-2 text-xs text-gray-500">
-            수집: {collectedText}
-          </div>
+          {/* ✅ 상태/가격: 메인 메타 정보 */}
+          <div className="mt-2 text-sm text-gray-700">{metaText}</div>
+
+          {/* ✅ 수집일: 하단 각주 */}
+          <div className="mt-2 text-xs text-gray-400">수집: {collectedText}</div>
         </div>
       </div>
     </a>
-  );
+  )
 }

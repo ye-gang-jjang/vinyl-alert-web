@@ -1,5 +1,12 @@
-import type { Listing, Release } from "@/lib/types"
+import type { Listing, Release, ListingStatus } from "@/lib/types"
 import type { ListingDto, ReleaseDto } from "./dto"
+
+function normalizeStatus(status: unknown): ListingStatus {
+  if (status === "ON_SALE" || status === "PREORDER" || status === "SOLD_OUT") {
+    return status
+  }
+  return "ON_SALE"
+}
 
 export function mapListingDto(dto: ListingDto): Listing {
   return {
@@ -10,6 +17,10 @@ export function mapListingDto(dto: ListingDto): Listing {
     imageUrl: dto.imageUrl,
     collectedAt: dto.collectedAt,
     latestCollectedAt: dto.latestCollectedAt ?? null,
+
+    // ✅ 추가
+    price: dto.price ?? null,
+    status: normalizeStatus(dto.status),
   }
 }
 

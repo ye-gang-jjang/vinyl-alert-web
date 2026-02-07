@@ -98,15 +98,18 @@ export async function deleteRelease(releaseId: string) {
   return true
 }
 
-
 /* =========================
-   Listing 생성
+   Listing 생성/수정/삭제
    ========================= */
+
+export type ListingStatus = "ON_SALE" | "PREORDER" | "SOLD_OUT"
 
 export type CreateListingPayload = {
   storeSlug: string
   sourceProductTitle: string
   url: string
+  price?: number | null
+  status?: ListingStatus // 서버 기본값 ON_SALE가 있더라도, 프론트에서 명시해 보내는 걸 권장
 }
 
 export async function addListingToRelease(
@@ -130,6 +133,50 @@ export async function addListingToRelease(
 
   const data: ListingDto = await res.json()
   return mapListingDto(data)
+}
+
+export type UpdateListingPayload = {
+  price?: number | null
+  status?: ListingStatus
+}
+
+/**
+ * Listing 수정 (Admin: 삭제/정리 탭에서 사용)
+ * - PATCH /listings/{listingId}
+ */
+export async function updateListing(
+  listingId: string,
+  payload: UpdateListingPayload
+) {
+  const res = await fetch(joinUrl(API_BASE, `/listings/${listingId}`), {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  })
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => "")
+    throw new Error(
+      `Failed to update listing (${res.status})${body ? `: ${body}` : ""}`
+    )
+  }
+
+  const data: ListingDto = await res.json()
+  return mapListingDto(data)
+}
+
+export async function deleteListing(listingId: string) {
+  const res = await fetch(joinUrl(API_BASE, `/listings/${listingId}`), {
+    method: "DELETE",
+  })
+
+  if (!res.ok) {
+    throw new Error("Failed to delete listing")
+  }
+
+  return true
 }
 
 /* =========================
@@ -169,18 +216,6 @@ export async function createStore(payload: CreateStorePayload) {
   }
 
   return res.json()
-}
-
-export async function deleteListing(listingId: string) {
-  const res = await fetch(joinUrl(API_BASE, `/listings/${listingId}`), {
-    method: "DELETE",
-  })
-
-  if (!res.ok) {
-    throw new Error("Failed to delete listing")
-  }
-
-  return true
 }
 
 export async function deleteStore(storeId: string) {

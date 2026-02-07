@@ -1,3 +1,5 @@
+export type ListingStatusDto = "ON_SALE" | "PREORDER" | "SOLD_OUT"
+
 export type ListingDto = {
   id: string
   sourceName: string
@@ -6,6 +8,10 @@ export type ListingDto = {
   imageUrl: string
   collectedAt: string
   latestCollectedAt?: string | null
+
+  // ✅ 추가
+  price?: number | null
+  status?: ListingStatusDto
 }
 
 export type ReleaseDto = {

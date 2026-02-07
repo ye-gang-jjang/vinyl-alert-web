@@ -65,6 +65,8 @@ export default async function ReleasePage({ params }: PageProps) {
                   url={l.url}
                   imageUrl={l.imageUrl}
                   collectedAt={l.collectedAt}
+                  price={l.price}
+                  status={l.status}
                 />
               </li>
             ))}

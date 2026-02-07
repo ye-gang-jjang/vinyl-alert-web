@@ -105,7 +105,7 @@ export default function AdminClient() {
             value="cleanup"
             className="shrink-0 text-red-600 data-[state=active]:bg-red-600 data-[state=active]:text-white"
           >
-            삭제/정리
+            수정/삭제
           </TabsTrigger>
 
           <TabsTrigger value="stores" className="shrink-0">

@@ -63,7 +63,7 @@ export function ReleaseCard({
 
           {/* 메타 정보 */}
           <div className="mt-2 space-y-1 text-xs text-gray-500">
-            <div>판매처 {storesCount}곳</div>
+            <div>판매처{storesCount} </div>
             <div>최근 업데이트: {collectedText}</div>
           </div>
         </div>

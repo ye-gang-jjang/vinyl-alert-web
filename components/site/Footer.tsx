@@ -14,7 +14,7 @@ export function Footer() {
           <p className="text-sm text-gray-600">{TAGLINE}</p>
 
           <p className="text-sm text-gray-600">
-            Cntact:{" "}
+            Contact:{" "}
             <a
               href={`mailto:${CONTACT_EMAIL}`}
               className="font-medium text-gray-900 hover:underline"

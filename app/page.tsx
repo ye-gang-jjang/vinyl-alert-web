@@ -65,6 +65,9 @@ export default async function HomePage({
     );
   }
 
+  // ✅ 최신 업데이트(=latestCollectedAt) 정렬용 유틸
+  const getTime = (iso?: string | null) => (iso ? Date.parse(iso) : 0);
+
   // 2) 정렬
   if (selectedSort === "artist_asc") {
     filtered = [...filtered].sort((a, b) =>
@@ -74,6 +77,13 @@ export default async function HomePage({
     filtered = [...filtered].sort((a, b) =>
       a.albumTitle.localeCompare(b.albumTitle),
     );
+  } else {
+    // ✅ default = 최신 업데이트 순(내림차순)
+    filtered = [...filtered].sort((a, b) => {
+      const ta = getTime(a.latestCollectedAt ?? null);
+      const tb = getTime(b.latestCollectedAt ?? null);
+      return tb - ta;
+    });
   }
 
   return (

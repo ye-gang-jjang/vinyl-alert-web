@@ -1,7 +1,7 @@
 import { SITE_NAME, TAGLINE } from "@/components/site/constants"
 
 const CONTACT_EMAIL =
-  process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "yeggang0602@gmail.com"
+  process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "lpick.contact@gmail.com"
 
 export function Footer() {
   const year = new Date().getFullYear()

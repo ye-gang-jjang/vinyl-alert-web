@@ -58,7 +58,8 @@ export function ReleaseCard({
           </div>
 
           <div className="mt-2 text-xs text-gray-500">
-            판매처 {storesCount} · 최근 업데이트: {collectedText}
+            판매처 {storesCount}
+            최근 업데이트: {collectedText}
           </div>
         </div>
       </div>

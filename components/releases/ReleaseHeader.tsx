@@ -25,7 +25,7 @@ export function ReleaseHeader({
         </h1>
 
         <div className="text-sm text-gray-600">
-          판매처 {storesCount}개 · 최근 수집: {collectedText}
+          판매처 {storesCount}개 · 최근 업데이트: {collectedText}
         </div>
       </div>
 

@@ -53,10 +53,15 @@ export function ReleaseCard({
 
         {/* Text */}
         <div className="min-w-0 flex-1">
-          <div className="truncate text-base font-semibold">
-            {artist} — {album}
+          {/* 아티스트명 */}
+          <div className="truncate text-sm font-medium text-gray-700">
+            {artist}
           </div>
 
+          {/* 앨범명 */}
+          <div className="truncate text-base font-semibold">{album}</div>
+
+          {/* 메타 정보 */}
           <div className="mt-2 space-y-1 text-xs text-gray-500">
             <div>판매처 {storesCount}곳</div>
             <div>최근 업데이트: {collectedText}</div>

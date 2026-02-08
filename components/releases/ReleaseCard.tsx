@@ -57,9 +57,9 @@ export function ReleaseCard({
             {artist} — {album}
           </div>
 
-          <div className="mt-2 text-xs text-gray-500">
-            판매처 {storesCount}
-            최근 업데이트: {collectedText}
+          <div className="mt-2 space-y-1 text-xs text-gray-500">
+            <div>판매처 {storesCount}곳</div>
+            <div>최근 업데이트: {collectedText}</div>
           </div>
         </div>
       </div>

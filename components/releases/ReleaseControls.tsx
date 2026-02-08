@@ -75,7 +75,7 @@ export default function ReleaseControls({
             value={selectedSort}
             onChange={(e) => setQuery({ sort: e.target.value as SortKey })}
           >
-            <option value="default">기본(최신 등록 순)</option>
+            <option value="default">최신 등록 순</option>
             <option value="artist_asc">가수명 A→Z</option>
             <option value="album_asc">앨범명 A→Z</option>
           </select>

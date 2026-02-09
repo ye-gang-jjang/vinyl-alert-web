@@ -2,7 +2,6 @@ import { fetchNewReleases } from "@/lib/api";
 
 export default async function sitemap() {
   const baseUrl = "https://www.lpick.shop";
-
   const releases = await fetchNewReleases();
 
   const releaseUrls = releases.map((r) => {

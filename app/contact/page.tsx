@@ -25,10 +25,11 @@ export default function ContactPage() {
         <h2 className="text-lg font-semibold">방향성</h2>
         <p className="text-sm text-gray-700 leading-6">
           L Pick은 흩어져 있는 LP 발매·판매 정보를 한 곳에 정리해, 원하는
-          레코드를 더 빠르고 정확하게 찾을 수 있도록 만드는 서비스입니다.
+          바이닐을 더 빠르고 정확하게 찾을 수 있도록 만드는 서비스입니다.
           <br />
-          MVP 단계에서는 과한 기능보다 <span className="font-medium">정확한 정보 제공</span>과{" "}
-          <span className="font-medium">안정적인 사용 경험</span>을 우선합니다.
+          국내 인디, 저의 취향에 맞는 가수 위주의 앨범들이 올라올 것 같아요. (요청에 따라 추가할 생각은 있습니다.)
+          <br />
+          국내 바이닐 시장이 커졌으면 하는 바램으로 시작한 프로젝트이고, 바이닐에 입문하는 사람들의 시작점이 되길 바랍니다.
         </p>
       </section>
 
@@ -39,11 +40,7 @@ export default function ContactPage() {
         <ul className="space-y-2 text-sm text-gray-700">
           <li className="flex gap-2">
             <span className="mt-[2px]">•</span>
-            <span>릴리즈/판매처 데이터 지속 확장</span>
-          </li>
-          <li className="flex gap-2">
-            <span className="mt-[2px]">•</span>
-            <span>가격/상태(예약·판매중·품절) 업데이트 품질 개선</span>
+            <span>릴리즈/판매처 데이터 지속 확장(대형 샵들 위주로 자동화가 목표입니다.)</span>
           </li>
           <li className="flex gap-2">
             <span className="mt-[2px]">•</span>
@@ -52,7 +49,7 @@ export default function ContactPage() {
           <li className="flex gap-2">
             <span className="mt-[2px]">•</span>
             <span>
-              (검토) 관심 릴리즈 알림 / 즐겨찾기 기능
+              관심 릴리즈 알림 / 즐겨찾기 기능
             </span>
           </li>
         </ul>
@@ -100,41 +97,11 @@ export default function ContactPage() {
               <span className="mt-[2px]">•</span>
               <span>수정/추가가 필요한 내용(가격/상태/상품명 등)</span>
             </li>
+            <li className="flex gap-2">
+              <span className="mt-[2px]">•</span>
+              <span>새로운 아이디어나 그외 문의도 모두 환영합니다</span>
+            </li>
           </ul>
-        </div>
-      </section>
-
-      {/* 4) 후원 */}
-      <section className="rounded-xl border bg-white p-6 space-y-3">
-        <h2 className="text-lg font-semibold">후원하기</h2>
-
-        <p className="text-sm text-gray-700 leading-6">
-          L Pick은 개인이 운영하는 프로젝트입니다. 서비스 유지 비용(도메인/서버)
-          및 운영 시간을 응원하고 싶다면 후원으로 함께해 주세요.
-          <br />
-          <span className="text-gray-500">
-            후원 여부는 서비스 이용과 무관하며, 선택 사항입니다.
-          </span>
-        </p>
-
-        {/* 계좌/링크는 일단 placeholder. 실제 값 정해지면 교체 */}
-        <div className="rounded-xl border bg-gray-50 p-4 space-y-2">
-          <p className="text-sm font-medium text-gray-900">후원 방법</p>
-
-          <div className="text-sm text-gray-700 space-y-1">
-            <div>
-              <span className="text-gray-500">계좌</span>{" "}
-              <span className="font-medium">추후 안내</span>
-            </div>
-            <div>
-              <span className="text-gray-500">링크</span>{" "}
-              <span className="font-medium">추후 안내</span>
-            </div>
-          </div>
-
-          <p className="text-xs text-gray-500">
-            * 후원 정보를 공개하기 전까지는 “추후 안내”로 두는 것을 권장합니다.
-          </p>
         </div>
       </section>
 

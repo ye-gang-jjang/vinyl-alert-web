@@ -13,7 +13,7 @@ export default function ContactPage() {
     <div className="space-y-8">
       {/* 상단 헤더 */}
       <header className="space-y-2">
-        <h1 className="text-2xl font-bold">문의 / 제보</h1>
+        <h1 className="text-2xl font-bold">L Pick</h1>
         <p className="text-sm text-gray-600">
           L Pick은 LP 발매·판매처 정보를 모아 더 빠르게 찾을 수 있도록 돕는
           개인 프로젝트입니다.

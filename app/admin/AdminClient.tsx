@@ -78,9 +78,6 @@ export default function AdminClient() {
     <div className="space-y-8">
       <header className="space-y-2">
         <h1 className="text-2xl font-bold">관리자</h1>
-        <p className="text-sm text-gray-600">
-          MVP 단계: 수동으로 릴리즈/판매처 정보를 등록함
-        </p>
       </header>
 
       {isLoading && releases.length === 0 && (

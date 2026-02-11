@@ -40,17 +40,19 @@ export default function ContactPage() {
         <ul className="space-y-2 text-sm text-gray-700">
           <li className="flex gap-2">
             <span className="mt-[2px]">•</span>
-            <span>릴리즈/판매처 데이터 지속 확장(대형 샵들 위주로 자동화가 목표입니다.)</span>
+            <span>릴리즈/판매처 데이터 지속 확장 (대형 샵들 위주로 자동화가 목표입니다.)</span>
           </li>
-          <li className="flex gap-2">
-            <span className="mt-[2px]">•</span>
-            <span>아티스트/레이블 단위 탐색 UX 고도화</span>
-          </li>
+
           <li className="flex gap-2">
             <span className="mt-[2px]">•</span>
             <span>
               관심 릴리즈 알림 / 즐겨찾기 기능
             </span>
+          </li>
+
+          <li className="flex gap-2">
+            <span className="mt-[2px]">•</span>
+            <span>오프라인 레코드샵 지도 (고민중에 있습니다.)</span>
           </li>
         </ul>
 

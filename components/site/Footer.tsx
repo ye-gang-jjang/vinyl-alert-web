@@ -4,7 +4,7 @@ import { Instagram } from "lucide-react"
 const CONTACT_EMAIL =
   process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "lpick.contact@gmail.com"
 
-const INSTAGRAM_URL = "https://www.instagram.com/너의아이디/"
+const INSTAGRAM_URL = "https://www.instagram.com/lpick.shop/"
 
 export function Footer() {
   const year = new Date().getFullYear()

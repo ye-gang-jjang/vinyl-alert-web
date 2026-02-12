@@ -9,7 +9,6 @@ type StoreItemProps = {
   imageUrl?: string | null
   collectedAt?: string | null
 
-  // ✅ 추가
   price?: number | null
   status?: ListingStatus | null
 }
@@ -85,7 +84,7 @@ export function StoreItem({
           <div className="mt-2 text-sm text-gray-700">{metaText}</div>
 
           {/* ✅ 수집일: 하단 각주 */}
-          <div className="mt-2 text-xs text-gray-400">수집: {collectedText}</div>
+          <div className="mt-2 text-xs text-gray-400">업데이트: {collectedText}</div>
         </div>
       </div>
     </a>

@@ -9,7 +9,7 @@ export const STORE_ICON_MAP: Record<string, string> = {
   "인스타그램": "/store-icons/instagram.png",
   "MPMG MUSIC": "/store-icons/mpmg.png",
   "KTOWN4U": "/store-icons/ktown4u.png",
-  "핫트랙스": "/store-icons/hottracks.png",
+  "핫트랙스(교보문고)": "/store-icons/hottracks.png",
 }
 
 export function getStoreIconUrl(storeName: string): string | undefined {

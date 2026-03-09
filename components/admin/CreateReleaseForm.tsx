@@ -52,7 +52,7 @@ export function CreateReleaseForm({
 
   return (
     <form onSubmit={onSubmit} className="space-y-4 rounded-xl border p-4">
-      <h2 className="text-lg font-semibold">릴리즈 등록</h2>
+      <h2 className="text-lg font-semibold">앨범 등록</h2>
 
       <div className="space-y-2">
         <label className="block text-sm font-medium">가수명 (필수)</label>

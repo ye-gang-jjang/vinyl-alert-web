@@ -42,3 +42,8 @@ next-env.d.ts
 
 # eslint
 .eslintcache
+
+# docs
+*.md
+!README.md
+

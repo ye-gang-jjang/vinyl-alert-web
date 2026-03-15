@@ -1,5 +1,5 @@
 import { ReleaseCard } from "@/components/releases/ReleaseCard"
-import { fetchReleasesByArtistName } from "@/lib/api"
+import { fetchReleaseSummariesByArtistName } from "@/lib/api"
 
 type PageProps = {
   params: Promise<{ artistName: string }>
@@ -8,7 +8,7 @@ type PageProps = {
 export default async function ArtistPage({ params }: PageProps) {
   const { artistName } = await params
 
-  const releases = await fetchReleasesByArtistName(artistName)
+  const releases = await fetchReleaseSummariesByArtistName(artistName)
 
   return (
     <div className="space-y-6">

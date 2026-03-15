@@ -50,6 +50,25 @@ export async function fetchReleaseSummaries(): Promise<ReleaseSummary[]> {
   return Array.isArray(data) ? data.map(mapReleaseSummaryDto) : []
 }
 
+export async function fetchReleaseSummariesByArtistName(
+  artistName: string
+): Promise<ReleaseSummary[]> {
+  const encodedArtistName = encodeURIComponent(artistName)
+  const res = await fetch(
+    joinUrl(API_BASE, `/artists/${encodedArtistName}/release-summaries`),
+    {
+      next: { revalidate: PUBLIC_REVALIDATE_SECONDS },
+    }
+  )
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch artist release summaries")
+  }
+
+  const data: ReleaseSummaryDto[] = await res.json()
+  return Array.isArray(data) ? data.map(mapReleaseSummaryDto) : []
+}
+
 export async function fetchReleaseById(id: string): Promise<Release | null> {
   const res = await fetch(joinUrl(API_BASE, `/releases/${id}`), {
     next: { revalidate: PUBLIC_REVALIDATE_SECONDS },

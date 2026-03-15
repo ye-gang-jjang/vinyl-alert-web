@@ -1,9 +1,7 @@
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 60;
 
 import { fetchNewReleases } from "@/lib/api";
-import { ReleaseCard } from "@/components/releases/ReleaseCard";
-import ReleaseControls from "@/components/releases/ReleaseControls";
+import { HomePageClient } from "@/components/releases/HomePageClient";
 
 type SortKey = "default" | "artist_asc" | "album_asc";
 
@@ -52,84 +50,13 @@ export default async function HomePage({
 
   const artists = uniqSorted(releases.map((r) => r.artistName));
 
-  // 1) 필터
-  let filtered = releases;
-
-  if (selectedArtist) {
-    filtered = filtered.filter((r) => r.artistName === selectedArtist);
-  }
-
-  if (selectedStore) {
-    filtered = filtered.filter((r) =>
-      r.listings?.some((l) => l.sourceName === selectedStore),
-    );
-  }
-
-  // ✅ 최신 업데이트(=latestCollectedAt) 정렬용 유틸
-  const getTime = (iso?: string | null) => (iso ? Date.parse(iso) : 0);
-
-  // 2) 정렬
-  if (selectedSort === "artist_asc") {
-    filtered = [...filtered].sort((a, b) =>
-      a.artistName.localeCompare(b.artistName),
-    );
-  } else if (selectedSort === "album_asc") {
-    filtered = [...filtered].sort((a, b) =>
-      a.albumTitle.localeCompare(b.albumTitle),
-    );
-  } else {
-    // ✅ default = 최신 업데이트 순(내림차순)
-    filtered = [...filtered].sort((a, b) => {
-      const ta = getTime(a.latestCollectedAt ?? null);
-      const tb = getTime(b.latestCollectedAt ?? null);
-      return tb - ta;
-    });
-  }
-
   return (
-    <div className="space-y-6">
-      <ReleaseControls
-        artists={artists}
-        selectedArtist={selectedArtist}
-        selectedStore={selectedStore}
-        selectedSort={selectedSort}
-      />
-
-      {/* ✅ 결과 요약 */}
-      <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:justify-between text-sm text-gray-600">
-        <span className="min-w-0">
-          총{" "}
-          <span className="font-medium text-gray-900">{filtered.length}</span>개
-          릴리즈
-        </span>
-
-        {(selectedArtist || selectedStore || selectedSort !== "default") && (
-          <span className="text-xs text-gray-500">필터/정렬 적용됨</span>
-        )}
-      </div>
-
-      {filtered.length === 0 ? (
-        <div className="rounded-xl border p-6 space-y-2">
-          <p className="text-sm font-medium">조건에 맞는 릴리즈가 없습니다.</p>
-          <p className="text-sm text-gray-600">
-            필터를 초기화하거나 다른 조건으로 다시 검색해보세요.
-          </p>
-        </div>
-      ) : (
-        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filtered.map((r) => (
-            <ReleaseCard
-              key={r.id}
-              id={r.id}
-              artist={r.artistName}
-              album={r.albumTitle}
-              coverImageUrl={r.coverImageUrl}
-              storesCount={r.storesCount}
-              latestCollectedAt={r.latestCollectedAt ?? null}
-            />
-          ))}
-        </section>
-      )}
-    </div>
+    <HomePageClient
+      releases={releases}
+      artists={artists}
+      initialSort={selectedSort}
+      initialArtist={selectedArtist}
+      initialStore={selectedStore}
+    />
   );
 }

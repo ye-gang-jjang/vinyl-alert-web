@@ -18,13 +18,15 @@ function joinUrl(base: string, path: string) {
   return `${base.replace(/\/$/, "")}${path}`
 }
 
+const PUBLIC_REVALIDATE_SECONDS = 60
+
 /* =========================
    Releases 조회
    ========================= */
 
 export async function fetchNewReleases(): Promise<Release[]> {
   const res = await fetch(joinUrl(API_BASE, "/releases"), {
-    cache: "no-store",
+    next: { revalidate: PUBLIC_REVALIDATE_SECONDS },
   })
 
   if (!res.ok) {
@@ -37,7 +39,7 @@ export async function fetchNewReleases(): Promise<Release[]> {
 
 export async function fetchReleaseById(id: string): Promise<Release | null> {
   const res = await fetch(joinUrl(API_BASE, `/releases/${id}`), {
-    cache: "no-store",
+    next: { revalidate: PUBLIC_REVALIDATE_SECONDS },
   })
 
   if (!res.ok) {

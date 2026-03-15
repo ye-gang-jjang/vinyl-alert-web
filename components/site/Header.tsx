@@ -17,6 +17,7 @@ function NavLink({
   return (
     <Link
       href={href}
+      prefetch={false}
       className={`
         text-sm font-medium transition-colors
         ${
@@ -38,6 +39,7 @@ export function Header() {
         {/* 로고 + 서비스명 (Home) */}
         <Link
           href="/"
+          prefetch={false}
           className="flex items-center gap-2 font-bold text-lg hover:opacity-90"
         >
           <Image

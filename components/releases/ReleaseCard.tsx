@@ -25,6 +25,7 @@ export function ReleaseCard({
   return (
     <Link
       href={`/releases/${id}`}
+      prefetch={false}
       className="
         block rounded-xl border bg-white
         transition-all

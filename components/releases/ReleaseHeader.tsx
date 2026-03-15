@@ -1,3 +1,4 @@
+import Image from "next/image"
 import { formatCollectedAgo } from "@/lib/formatters/formatCollectedAgo"
 
 type ReleaseHeaderProps = {
@@ -31,14 +32,16 @@ export function ReleaseHeader({
 
       {/* Cover image */}
       <div className="w-full">
-        <div className="mx-auto aspect-square w-full max-w-[280px] overflow-hidden rounded-xl border bg-white sm:max-w-[320px]">
+        <div className="relative mx-auto aspect-square w-full max-w-[280px] overflow-hidden rounded-xl border bg-white sm:max-w-[320px]">
           {coverImageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <Image
               src={coverImageUrl}
               alt={`${artistName} - ${albumTitle} cover`}
+              fill
+              priority
+              sizes="(max-width: 640px) 280px, 320px"
               className="h-full w-full object-cover"
-              loading="lazy"
+              quality={75}
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-sm text-gray-400">

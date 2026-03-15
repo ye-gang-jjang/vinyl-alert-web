@@ -1,3 +1,4 @@
+import Image from "next/image"
 import { formatCollectedAgo } from "@/lib/formatters/formatCollectedAgo"
 
 type ListingStatus = "ON_SALE" | "PREORDER" | "SOLD_OUT"
@@ -53,13 +54,16 @@ export function StoreItem({
         {/* 왼쪽: 판매처 이미지 */}
         <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg border bg-white">
           {imageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={imageUrl}
-              alt={`${name} icon`}
-              className="h-full w-full object-contain p-2"
-              loading="lazy"
-            />
+            <div className="relative h-full w-full">
+              <Image
+                src={imageUrl}
+                alt={`${name} icon`}
+                fill
+                sizes="56px"
+                className="h-full w-full object-contain p-2"
+                quality={70}
+              />
+            </div>
           ) : (
             <div className="flex h-full w-full items-center justify-center text-xs text-gray-400">
               -

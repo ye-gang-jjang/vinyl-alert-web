@@ -1,6 +1,7 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
+import { usePathname } from "next/navigation"
 import ReleaseControls, { type SortKey } from "@/components/releases/ReleaseControls"
 import { ReleaseCard } from "@/components/releases/ReleaseCard"
 import type { ReleaseSummary } from "@/lib/types"
@@ -24,9 +25,31 @@ export function HomePageClient({
   initialArtist,
   initialStore,
 }: Props) {
+  const pathname = usePathname()
   const [selectedSort, setSelectedSort] = useState<SortKey>(initialSort)
   const [selectedArtist, setSelectedArtist] = useState(initialArtist)
   const [selectedStore, setSelectedStore] = useState(initialStore)
+
+  useEffect(() => {
+    const params = new URLSearchParams()
+
+    if (selectedSort !== "default") {
+      params.set("sort", selectedSort)
+    }
+
+    if (selectedArtist) {
+      params.set("artist", selectedArtist)
+    }
+
+    if (selectedStore) {
+      params.set("store", selectedStore)
+    }
+
+    const nextUrl = params.size > 0 ? `${pathname}?${params.toString()}` : pathname
+    if (window.location.pathname + window.location.search !== nextUrl) {
+      window.history.replaceState(null, "", nextUrl)
+    }
+  }, [pathname, selectedArtist, selectedSort, selectedStore])
 
   const filtered = useMemo(() => {
     let next = releases

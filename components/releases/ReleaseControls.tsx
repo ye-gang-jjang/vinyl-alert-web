@@ -2,7 +2,6 @@
 
 import React from "react"
 import { useMemo } from "react"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import {
@@ -17,13 +16,17 @@ import { Check, ChevronsUpDown } from "lucide-react"
 import { getStoreIconUrl } from "@/lib/constants/storeIcons"
 import { STORES } from "@/lib/constants/stores"
 
-type SortKey = "default" | "artist_asc" | "album_asc"
+export type SortKey = "default" | "artist_asc" | "album_asc"
 
 type Props = {
   artists: string[]
   selectedArtist: string
   selectedStore: string
   selectedSort: SortKey
+  onSortChange: (value: SortKey) => void
+  onArtistChange: (value: string) => void
+  onStoreChange: (value: string) => void
+  onReset: () => void
 }
 
 export default function ReleaseControls({
@@ -31,38 +34,12 @@ export default function ReleaseControls({
   selectedArtist,
   selectedStore,
   selectedSort,
+  onSortChange,
+  onArtistChange,
+  onStoreChange,
+  onReset,
 }: Props) {
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-
   const storeOptions = useMemo(() => STORES.map((s) => s.name), [])
-
-  function setQuery(next: Partial<{ sort: SortKey; artist: string; store: string }>) {
-    const sp = new URLSearchParams(searchParams.toString())
-
-    if (next.sort !== undefined) {
-      if (next.sort === "default") sp.delete("sort")
-      else sp.set("sort", next.sort)
-    }
-
-    if (next.artist !== undefined) {
-      if (!next.artist) sp.delete("artist")
-      else sp.set("artist", next.artist)
-    }
-
-    if (next.store !== undefined) {
-      if (!next.store) sp.delete("store")
-      else sp.set("store", next.store)
-    }
-
-    const qs = sp.toString()
-    router.push(qs ? `${pathname}?${qs}` : pathname)
-  }
-
-  function reset() {
-    router.push(pathname)
-  }
 
   return (
     <div className="flex flex-col gap-3 rounded-xl border p-4 sm:flex-row sm:items-center sm:justify-between">
@@ -73,7 +50,7 @@ export default function ReleaseControls({
           <select
             className="h-9 rounded-md border bg-white px-2 text-sm"
             value={selectedSort}
-            onChange={(e) => setQuery({ sort: e.target.value as SortKey })}
+            onChange={(e) => onSortChange(e.target.value as SortKey)}
           >
             <option value="default">최신 등록 순</option>
             <option value="artist_asc">가수명 ㄱ→ㅎ</option>
@@ -87,7 +64,7 @@ export default function ReleaseControls({
           placeholder="가수 선택"
           items={artists}
           value={selectedArtist}
-          onChange={(v) => setQuery({ artist: v })}
+          onChange={onArtistChange}
         />
 
         {/* 판매처 필터 (아이콘 포함 콤보박스) */}
@@ -96,12 +73,12 @@ export default function ReleaseControls({
           placeholder="판매처 선택"
           items={storeOptions}
           value={selectedStore}
-          onChange={(v) => setQuery({ store: v })}
+          onChange={onStoreChange}
         />
       </div>
 
       <div className="flex items-center gap-2">
-        <Button type="button" variant="outline" onClick={reset}>
+        <Button type="button" variant="outline" onClick={onReset}>
           필터 초기화
         </Button>
       </div>

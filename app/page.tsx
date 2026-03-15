@@ -1,6 +1,6 @@
 export const revalidate = 60;
 
-import { fetchNewReleases } from "@/lib/api";
+import { fetchReleaseSummaries } from "@/lib/api";
 import { HomePageClient } from "@/components/releases/HomePageClient";
 
 type SortKey = "default" | "artist_asc" | "album_asc";
@@ -24,7 +24,7 @@ export default async function HomePage({
 
   let releases = [];
   try {
-    releases = await fetchNewReleases();
+    releases = await fetchReleaseSummaries();
   } catch {
     return (
       <div className="space-y-6">

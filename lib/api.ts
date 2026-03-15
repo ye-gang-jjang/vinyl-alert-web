@@ -1,6 +1,6 @@
-import type { Release } from "./types"
-import type { ListingDto, ReleaseDto } from "@/lib/api/dto"
-import { mapListingDto, mapReleaseDto } from "@/lib/api/mappers"
+import type { Release, ReleaseSummary } from "./types"
+import type { ListingDto, ReleaseDto, ReleaseSummaryDto } from "@/lib/api/dto"
+import { mapListingDto, mapReleaseDto, mapReleaseSummaryDto } from "@/lib/api/mappers"
 
 /**
  * API Base URL
@@ -35,6 +35,19 @@ export async function fetchNewReleases(): Promise<Release[]> {
 
   const data: ReleaseDto[] = await res.json()
   return Array.isArray(data) ? data.map(mapReleaseDto) : []
+}
+
+export async function fetchReleaseSummaries(): Promise<ReleaseSummary[]> {
+  const res = await fetch(joinUrl(API_BASE, "/release-summaries"), {
+    next: { revalidate: PUBLIC_REVALIDATE_SECONDS },
+  })
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch release summaries")
+  }
+
+  const data: ReleaseSummaryDto[] = await res.json()
+  return Array.isArray(data) ? data.map(mapReleaseSummaryDto) : []
 }
 
 export async function fetchReleaseById(id: string): Promise<Release | null> {

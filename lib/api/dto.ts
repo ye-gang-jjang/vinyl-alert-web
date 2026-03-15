@@ -24,3 +24,14 @@ export type ReleaseDto = {
   collectedAt?: string | null
   latestCollectedAt?: string | null
 }
+
+export type ReleaseSummaryDto = {
+  id: string
+  artistName: string
+  albumTitle: string
+  coverImageUrl?: string
+  storesCount: number
+  storeNames: string[]
+  collectedAt?: string | null
+  latestCollectedAt?: string | null
+}

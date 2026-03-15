@@ -1,5 +1,5 @@
-import type { Listing, Release, ListingStatus } from "@/lib/types"
-import type { ListingDto, ReleaseDto } from "./dto"
+import type { Listing, Release, ReleaseSummary, ListingStatus } from "@/lib/types"
+import type { ListingDto, ReleaseDto, ReleaseSummaryDto } from "./dto"
 
 function normalizeStatus(status: unknown): ListingStatus {
   if (status === "ON_SALE" || status === "PREORDER" || status === "SOLD_OUT") {
@@ -32,6 +32,19 @@ export function mapReleaseDto(dto: ReleaseDto): Release {
     coverImageUrl: dto.coverImageUrl,
     storesCount: dto.storesCount,
     listings: Array.isArray(dto.listings) ? dto.listings.map(mapListingDto) : [],
+    collectedAt: dto.collectedAt ?? null,
+    latestCollectedAt: dto.latestCollectedAt ?? null,
+  }
+}
+
+export function mapReleaseSummaryDto(dto: ReleaseSummaryDto): ReleaseSummary {
+  return {
+    id: dto.id,
+    artistName: dto.artistName,
+    albumTitle: dto.albumTitle,
+    coverImageUrl: dto.coverImageUrl,
+    storesCount: dto.storesCount,
+    storeNames: Array.isArray(dto.storeNames) ? dto.storeNames : [],
     collectedAt: dto.collectedAt ?? null,
     latestCollectedAt: dto.latestCollectedAt ?? null,
   }

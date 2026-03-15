@@ -24,3 +24,14 @@ export type Release = {
   collectedAt?: string | null
   latestCollectedAt?: string | null
 }
+
+export type ReleaseSummary = {
+  id: string
+  artistName: string
+  albumTitle: string
+  coverImageUrl?: string
+  storesCount: number
+  storeNames: string[]
+  collectedAt?: string | null
+  latestCollectedAt?: string | null
+}

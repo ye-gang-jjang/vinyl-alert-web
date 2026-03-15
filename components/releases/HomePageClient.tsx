@@ -3,10 +3,10 @@
 import { useMemo, useState } from "react"
 import ReleaseControls, { type SortKey } from "@/components/releases/ReleaseControls"
 import { ReleaseCard } from "@/components/releases/ReleaseCard"
-import type { Release } from "@/lib/types"
+import type { ReleaseSummary } from "@/lib/types"
 
 type Props = {
-  releases: Release[]
+  releases: ReleaseSummary[]
   artists: string[]
   initialSort: SortKey
   initialArtist: string
@@ -36,9 +36,7 @@ export function HomePageClient({
     }
 
     if (selectedStore) {
-      next = next.filter((release) =>
-        release.listings?.some((listing) => listing.sourceName === selectedStore)
-      )
+      next = next.filter((release) => release.storeNames.includes(selectedStore))
     }
 
     if (selectedSort === "artist_asc") {

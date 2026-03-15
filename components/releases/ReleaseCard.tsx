@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { formatCollectedAgo } from "@/lib/formatters/formatCollectedAgo";
 
@@ -36,14 +37,15 @@ export function ReleaseCard({
     >
       <div className="flex gap-4 p-4">
         {/* Cover image */}
-        <div className="h-20 w-20 shrink-0 overflow-hidden rounded-lg border bg-white">
+        <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border bg-white">
           {coverImageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <Image
               src={coverImageUrl}
               alt={`${artist} - ${album} cover`}
+              fill
+              sizes="80px"
               className="h-full w-full object-cover"
-              loading="lazy"
+              quality={70}
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-xs text-gray-400">

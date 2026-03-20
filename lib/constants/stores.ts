@@ -15,4 +15,6 @@ export const STORES: Store[] = [
   { id: "mpmg", name: "MPMG MUSIC" },
   { id: "ktown4u", name: "KTOWN4U"},
   { id: "hottracks", name: "핫트랙스(교보문고)"},
+
+  { id: "Other", name: "other"},
 ]

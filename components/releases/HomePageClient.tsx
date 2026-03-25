@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react"
 import { usePathname } from "next/navigation"
 import ReleaseControls, { type SortKey } from "@/components/releases/ReleaseControls"
 import { ReleaseCard } from "@/components/releases/ReleaseCard"
-import type { ReleaseSummary } from "@/lib/types"
+import type { ReleaseSummary, StoreRef } from "@/lib/types"
 
 type Props = {
   releases: ReleaseSummary[]
@@ -29,6 +29,20 @@ export function HomePageClient({
   const [selectedSort, setSelectedSort] = useState<SortKey>(initialSort)
   const [selectedArtist, setSelectedArtist] = useState(initialArtist)
   const [selectedStore, setSelectedStore] = useState(initialStore)
+
+  const storeOptions = useMemo(() => {
+    const deduped = new Map<string, StoreRef>()
+
+    releases.forEach((release) => {
+      release.stores.forEach((store) => {
+        if (!deduped.has(store.slug)) {
+          deduped.set(store.slug, store)
+        }
+      })
+    })
+
+    return Array.from(deduped.values()).sort((a, b) => a.name.localeCompare(b.name))
+  }, [releases])
 
   useEffect(() => {
     const params = new URLSearchParams()
@@ -59,7 +73,7 @@ export function HomePageClient({
     }
 
     if (selectedStore) {
-      next = next.filter((release) => release.storeNames.includes(selectedStore))
+      next = next.filter((release) => release.stores.some((store) => store.slug === selectedStore))
     }
 
     if (selectedSort === "artist_asc") {
@@ -87,6 +101,7 @@ export function HomePageClient({
     <div className="space-y-6">
       <ReleaseControls
         artists={artists}
+        stores={storeOptions}
         selectedArtist={selectedArtist}
         selectedStore={selectedStore}
         selectedSort={selectedSort}

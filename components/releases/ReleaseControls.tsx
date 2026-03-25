@@ -1,7 +1,6 @@
 "use client"
 
 import React from "react"
-import { useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import {
@@ -13,13 +12,13 @@ import {
   CommandList,
 } from "@/components/ui/command"
 import { Check, ChevronsUpDown } from "lucide-react"
-import { getStoreIconUrl } from "@/lib/constants/storeIcons"
-import { STORES } from "@/lib/constants/stores"
+import type { StoreRef } from "@/lib/types"
 
 export type SortKey = "default" | "artist_asc" | "album_asc"
 
 type Props = {
   artists: string[]
+  stores: StoreRef[]
   selectedArtist: string
   selectedStore: string
   selectedSort: SortKey
@@ -31,6 +30,7 @@ type Props = {
 
 export default function ReleaseControls({
   artists,
+  stores,
   selectedArtist,
   selectedStore,
   selectedSort,
@@ -39,8 +39,6 @@ export default function ReleaseControls({
   onStoreChange,
   onReset,
 }: Props) {
-  const storeOptions = useMemo(() => STORES.map((s) => s.name), [])
-
   return (
     <div className="flex flex-col gap-3 rounded-xl border p-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -71,7 +69,7 @@ export default function ReleaseControls({
         <StoreComboboxLite
           label="판매처"
           placeholder="판매처 선택"
-          items={storeOptions}
+          items={stores}
           value={selectedStore}
           onChange={onStoreChange}
         />
@@ -165,12 +163,14 @@ function StoreComboboxLite({
 }: {
   label: string
   placeholder: string
-  items: string[]
+  items: StoreRef[]
   value: string
   onChange: (v: string) => void
 }) {
   const [open, setOpen] = React.useState(false)
-  const selectedIconUrl = value ? getStoreIconUrl(value) : undefined
+  const selectedStore = items.find((item) => item.slug === value)
+  const selectedIconUrl = selectedStore?.iconUrl
+  const selectedLabel = selectedStore?.name ?? placeholder
 
   return (
     <div className="flex items-center gap-2">
@@ -183,12 +183,12 @@ function StoreComboboxLite({
               <div className="h-5 w-5 shrink-0 overflow-hidden rounded bg-white">
                 {selectedIconUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={selectedIconUrl} alt={`${value} icon`} className="h-full w-full object-contain" />
+                  <img src={selectedIconUrl} alt={`${selectedLabel} icon`} className="h-full w-full object-contain" />
                 ) : (
                   <div className="h-full w-full" />
                 )}
               </div>
-              <span className="truncate">{value ? value : placeholder}</span>
+              <span className="truncate">{selectedLabel}</span>
             </div>
 
             <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
@@ -213,16 +213,16 @@ function StoreComboboxLite({
                   <span>전체</span>
                 </CommandItem>
 
-                {items.map((name) => {
-                  const isSelected = value === name
-                  const iconUrl = getStoreIconUrl(name)
+                {items.map((store) => {
+                  const isSelected = value === store.slug
+                  const iconUrl = store.iconUrl
 
                   return (
                     <CommandItem
-                      key={name}
-                      value={name}
+                      key={store.slug}
+                      value={store.name}
                       onSelect={() => {
-                        onChange(name)
+                        onChange(store.slug)
                         setOpen(false)
                       }}
                     >
@@ -231,13 +231,13 @@ function StoreComboboxLite({
                       <div className="mr-2 h-5 w-5 shrink-0 overflow-hidden rounded bg-white">
                         {iconUrl ? (
                           // eslint-disable-next-line @next/next/no-img-element
-                          <img src={iconUrl} alt={`${name} icon`} className="h-full w-full object-contain" />
+                          <img src={iconUrl} alt={`${store.name} icon`} className="h-full w-full object-contain" />
                         ) : (
                           <div className="h-full w-full" />
                         )}
                       </div>
 
-                      <span>{name}</span>
+                      <span>{store.name}</span>
                     </CommandItem>
                   )
                 })}

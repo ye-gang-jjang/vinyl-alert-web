@@ -1,5 +1,11 @@
 export type ListingStatusDto = "ON_SALE" | "PREORDER" | "SOLD_OUT"
 
+export type StoreRefDto = {
+  slug: string
+  name: string
+  iconUrl: string
+}
+
 export type ListingDto = {
   id: string
   sourceName: string
@@ -31,7 +37,7 @@ export type ReleaseSummaryDto = {
   albumTitle: string
   coverImageUrl?: string
   storesCount: number
-  storeNames: string[]
+  stores: StoreRefDto[]
   collectedAt?: string | null
   latestCollectedAt?: string | null
 }

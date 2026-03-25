@@ -1,5 +1,4 @@
 import { SITE_NAME, TAGLINE } from "@/components/site/constants"
-import { Instagram } from "lucide-react"
 
 const CONTACT_EMAIL =
   process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "lpick.contact@gmail.com"

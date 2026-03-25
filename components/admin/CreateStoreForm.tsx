@@ -50,7 +50,7 @@ export function CreateStoreForm({
       setIconUrl("/store-icons/")
 
       await onCreated?.()
-    } catch (e) {
+    } catch {
       setStatus("❌ 스토어 등록에 실패했어. slug 중복인지 확인해줘.")
     } finally {
       setGlobalLoading(false)

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { formatCollectedAgo } from "@/lib/formatters/formatCollectedAgo";
+import { formatCollectedAgo } from "@/shared/lib/formatters/formatCollectedAgo";
 
 type ReleaseCardProps = {
   id: string;

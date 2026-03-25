@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { createRelease } from "@/lib/api"
+import { createRelease } from "@/features/releases/api/releases"
 
 type Props = {
   onCreated?: (createdId: string) => void

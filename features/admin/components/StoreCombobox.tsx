@@ -12,13 +12,7 @@ import {
   CommandList,
 } from "@/components/ui/command"
 import { Check, ChevronsUpDown } from "lucide-react"
-
-type Store = {
-  id: string
-  name: string
-  slug: string
-  iconUrl: string
-}
+import type { Store } from "@/features/stores/types"
 
 type Props = {
   stores: Store[]

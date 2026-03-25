@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { createStore } from "@/lib/api"
+import { createStore } from "@/features/stores/api/stores"
 
 type Props = {
   setStatus: (v: string | null) => void

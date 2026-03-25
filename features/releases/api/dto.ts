@@ -1,12 +1,7 @@
-export type ListingStatus = "ON_SALE" | "PREORDER" | "SOLD_OUT"
+import type { ListingStatus } from "@/features/listings/types"
+import type { StoreRef } from "@/features/stores/types"
 
-export type StoreRef = {
-  slug: string
-  name: string
-  iconUrl: string
-}
-
-export type Listing = {
+export type ListingDto = {
   id: string
   sourceName: string
   sourceProductTitle: string
@@ -14,24 +9,22 @@ export type Listing = {
   imageUrl: string
   collectedAt: string
   latestCollectedAt?: string | null
-
-  // ✅ 추가
   price?: number | null
   status?: ListingStatus
 }
 
-export type Release = {
+export type ReleaseDto = {
   id: string
   artistName: string
   albumTitle: string
   coverImageUrl?: string
   storesCount: number
-  listings: Listing[]
+  listings: ListingDto[]
   collectedAt?: string | null
   latestCollectedAt?: string | null
 }
 
-export type ReleaseSummary = {
+export type ReleaseSummaryDto = {
   id: string
   artistName: string
   albumTitle: string

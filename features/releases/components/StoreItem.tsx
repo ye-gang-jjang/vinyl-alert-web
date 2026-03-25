@@ -1,5 +1,5 @@
 import Image from "next/image"
-import { formatCollectedAgo } from "@/lib/formatters/formatCollectedAgo"
+import { formatCollectedAgo } from "@/shared/lib/formatters/formatCollectedAgo"
 
 type ListingStatus = "ON_SALE" | "PREORDER" | "SOLD_OUT"
 

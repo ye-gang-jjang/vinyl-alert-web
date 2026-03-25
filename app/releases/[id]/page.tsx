@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { fetchReleaseById } from "@/lib/api";
-import { ReleaseHeader } from "@/components/releases/ReleaseHeader";
-import { StoreItem } from "@/components/releases/StoreItem";
+import { fetchReleaseById } from "@/features/releases/api/releases";
+import { ReleaseHeader } from "@/features/releases/components/ReleaseHeader";
+import { StoreItem } from "@/features/releases/components/StoreItem";
 
 type PageProps = {
   params: Promise<{ id: string }>;

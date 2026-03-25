@@ -1,4 +1,4 @@
-import { fetchNewReleases } from "@/lib/api";
+import { fetchNewReleases } from "@/features/releases/api/releases";
 
 export default async function sitemap() {
   const baseUrl = "https://www.lpick.shop";

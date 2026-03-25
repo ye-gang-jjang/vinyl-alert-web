@@ -2,15 +2,16 @@
 
 import { useEffect, useState } from "react";
 
-import type { Release } from "@/lib/types";
-import { fetchNewReleases, fetchStores } from "@/lib/api";
-import type { Store } from "@/lib/api";
+import { fetchNewReleases } from "@/features/releases/api/releases";
+import type { Release } from "@/features/releases/types";
+import { fetchStores } from "@/features/stores/api/stores";
+import type { Store } from "@/features/stores/types";
 
-import { CreateReleaseForm } from "@/components/admin/CreateReleaseForm";
-import { AddListingForm } from "@/components/admin/AddListingForm";
-import { CreateStoreForm } from "@/components/admin/CreateStoreForm";
-import { ManageReleaseListings } from "@/components/admin/ManageReleaseListings";
-import { StoreList } from "@/components/admin/StoreList";
+import { AddListingForm } from "@/features/admin/components/AddListingForm";
+import { CreateReleaseForm } from "@/features/admin/components/CreateReleaseForm";
+import { CreateStoreForm } from "@/features/admin/components/CreateStoreForm";
+import { ManageReleaseListings } from "@/features/admin/components/ManageReleaseListings";
+import { StoreList } from "@/features/admin/components/StoreList";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 

@@ -2,20 +2,21 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { usePathname } from "next/navigation"
-import ReleaseControls, { type SortKey } from "@/components/releases/ReleaseControls"
-import { ReleaseCard } from "@/components/releases/ReleaseCard"
-import type { ReleaseSummary, StoreRef } from "@/lib/types"
+import ReleaseControls from "@/features/releases/components/ReleaseControls"
+import { ReleaseCard } from "@/features/releases/components/ReleaseCard"
+import {
+  buildStoreOptions,
+  filterAndSortReleases,
+  type ReleaseSortKey,
+} from "@/features/releases/lib/filtering"
+import type { ReleaseSummary } from "@/features/releases/types"
 
 type Props = {
   releases: ReleaseSummary[]
   artists: string[]
-  initialSort: SortKey
+  initialSort: ReleaseSortKey
   initialArtist: string
   initialStore: string
-}
-
-function getTime(iso?: string | null) {
-  return iso ? Date.parse(iso) : 0
 }
 
 export function HomePageClient({
@@ -26,23 +27,11 @@ export function HomePageClient({
   initialStore,
 }: Props) {
   const pathname = usePathname()
-  const [selectedSort, setSelectedSort] = useState<SortKey>(initialSort)
+  const [selectedSort, setSelectedSort] = useState<ReleaseSortKey>(initialSort)
   const [selectedArtist, setSelectedArtist] = useState(initialArtist)
   const [selectedStore, setSelectedStore] = useState(initialStore)
 
-  const storeOptions = useMemo(() => {
-    const deduped = new Map<string, StoreRef>()
-
-    releases.forEach((release) => {
-      release.stores.forEach((store) => {
-        if (!deduped.has(store.slug)) {
-          deduped.set(store.slug, store)
-        }
-      })
-    })
-
-    return Array.from(deduped.values()).sort((a, b) => a.name.localeCompare(b.name))
-  }, [releases])
+  const storeOptions = useMemo(() => buildStoreOptions(releases), [releases])
 
   useEffect(() => {
     const params = new URLSearchParams()
@@ -65,31 +54,10 @@ export function HomePageClient({
     }
   }, [pathname, selectedArtist, selectedSort, selectedStore])
 
-  const filtered = useMemo(() => {
-    let next = releases
-
-    if (selectedArtist) {
-      next = next.filter((release) => release.artistName === selectedArtist)
-    }
-
-    if (selectedStore) {
-      next = next.filter((release) => release.stores.some((store) => store.slug === selectedStore))
-    }
-
-    if (selectedSort === "artist_asc") {
-      return [...next].sort((a, b) => a.artistName.localeCompare(b.artistName))
-    }
-
-    if (selectedSort === "album_asc") {
-      return [...next].sort((a, b) => a.albumTitle.localeCompare(b.albumTitle))
-    }
-
-    return [...next].sort((a, b) => {
-      const timeA = getTime(a.latestCollectedAt ?? null)
-      const timeB = getTime(b.latestCollectedAt ?? null)
-      return timeB - timeA
-    })
-  }, [releases, selectedArtist, selectedSort, selectedStore])
+  const filtered = useMemo(
+    () => filterAndSortReleases(releases, selectedArtist, selectedStore, selectedSort),
+    [releases, selectedArtist, selectedSort, selectedStore],
+  )
 
   function resetFilters() {
     setSelectedSort("default")

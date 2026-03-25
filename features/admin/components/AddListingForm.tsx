@@ -1,19 +1,13 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import type { Release } from "@/lib/types"
-import { addListingToRelease, fetchStores } from "@/lib/api"
-import { ReleaseCombobox } from "@/components/admin/ReleaseCombobox"
-import { StoreCombobox } from "@/components/admin/StoreCombobox"
-
-type Store = {
-  id: string
-  name: string
-  slug: string
-  iconUrl: string
-}
-
-type ListingStatus = "ON_SALE" | "PREORDER" | "SOLD_OUT"
+import { addListingToRelease } from "@/features/listings/api/listings"
+import type { ListingStatus } from "@/features/listings/types"
+import { fetchStores } from "@/features/stores/api/stores"
+import type { Release } from "@/features/releases/types"
+import type { Store } from "@/features/stores/types"
+import { ReleaseCombobox } from "@/features/admin/components/ReleaseCombobox"
+import { StoreCombobox } from "@/features/admin/components/StoreCombobox"
 
 type Props = {
   releases: Release[]

@@ -1,7 +1,7 @@
 "use client"
 
-import type { Store } from "@/lib/api"
-import { deleteStore } from "@/lib/api"
+import { deleteStore } from "@/features/stores/api/stores"
+import type { Store } from "@/features/stores/types"
 
 type Props = {
   stores: Store[]

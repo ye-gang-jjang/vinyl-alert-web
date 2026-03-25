@@ -1,5 +1,5 @@
-import { ReleaseCard } from "@/components/releases/ReleaseCard"
-import { fetchReleaseSummariesByArtistName } from "@/lib/api"
+import { fetchReleaseSummariesByArtistName } from "@/features/releases/api/releases"
+import { ReleaseCard } from "@/features/releases/components/ReleaseCard"
 
 type PageProps = {
   params: Promise<{ artistName: string }>

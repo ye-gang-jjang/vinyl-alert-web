@@ -1,11 +1,11 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import type { Release } from "@/lib/types"
-import { deleteListing, deleteRelease, updateListing } from "@/lib/api"
-import { ReleaseCombobox } from "@/components/admin/ReleaseCombobox"
-
-type ListingStatus = "ON_SALE" | "PREORDER" | "SOLD_OUT"
+import { deleteListing, updateListing } from "@/features/listings/api/listings"
+import type { ListingStatus } from "@/features/listings/types"
+import { deleteRelease } from "@/features/releases/api/releases"
+import type { Release } from "@/features/releases/types"
+import { ReleaseCombobox } from "@/features/admin/components/ReleaseCombobox"
 
 type EditState = {
   price: string

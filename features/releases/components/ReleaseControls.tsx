@@ -12,17 +12,16 @@ import {
   CommandList,
 } from "@/components/ui/command"
 import { Check, ChevronsUpDown } from "lucide-react"
-import type { StoreRef } from "@/lib/types"
-
-export type SortKey = "default" | "artist_asc" | "album_asc"
+import type { StoreRef } from "@/features/stores/types"
+import type { ReleaseSortKey } from "@/features/releases/lib/filtering"
 
 type Props = {
   artists: string[]
   stores: StoreRef[]
   selectedArtist: string
   selectedStore: string
-  selectedSort: SortKey
-  onSortChange: (value: SortKey) => void
+  selectedSort: ReleaseSortKey
+  onSortChange: (value: ReleaseSortKey) => void
   onArtistChange: (value: string) => void
   onStoreChange: (value: string) => void
   onReset: () => void
@@ -48,7 +47,7 @@ export default function ReleaseControls({
           <select
             className="h-9 rounded-md border bg-white px-2 text-sm"
             value={selectedSort}
-            onChange={(e) => onSortChange(e.target.value as SortKey)}
+            onChange={(e) => onSortChange(e.target.value as ReleaseSortKey)}
           >
             <option value="default">최신 등록 순</option>
             <option value="artist_asc">가수명 ㄱ→ㅎ</option>

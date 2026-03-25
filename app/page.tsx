@@ -1,7 +1,7 @@
 export const revalidate = 60;
 
-import { fetchReleaseSummaries } from "@/lib/api";
-import { HomePageClient } from "@/components/releases/HomePageClient";
+import { HomePageClient } from "@/features/releases/components/HomePageClient";
+import { fetchReleaseSummaries } from "@/features/releases/api/releases";
 
 type SortKey = "default" | "artist_asc" | "album_asc";
 

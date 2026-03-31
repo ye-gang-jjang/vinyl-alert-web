@@ -7,11 +7,11 @@ import type { Release } from "@/features/releases/types";
 import { fetchStores } from "@/features/stores/api/stores";
 import type { Store } from "@/features/stores/types";
 
-import { AddListingForm } from "@/features/admin/components/AddListingForm";
-import { CreateReleaseForm } from "@/features/admin/components/CreateReleaseForm";
-import { CreateStoreForm } from "@/features/admin/components/CreateStoreForm";
-import { ManageReleaseListings } from "@/features/admin/components/ManageReleaseListings";
-import { StoreList } from "@/features/admin/components/StoreList";
+import { AddListingForm } from "@/features/admin/listings/components/AddListingForm";
+import { ManageReleaseListings } from "@/features/admin/listings/components/ManageReleaseListings";
+import { CreateReleaseForm } from "@/features/admin/releases/components/CreateReleaseForm";
+import { CreateStoreForm } from "@/features/admin/stores/components/CreateStoreForm";
+import { StoreList } from "@/features/admin/stores/components/StoreList";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 

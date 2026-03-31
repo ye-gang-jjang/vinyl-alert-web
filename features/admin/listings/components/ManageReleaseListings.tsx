@@ -5,7 +5,7 @@ import { deleteListing, updateListing } from "@/features/listings/api/listings"
 import type { ListingStatus } from "@/features/listings/types"
 import { deleteRelease } from "@/features/releases/api/releases"
 import type { Release } from "@/features/releases/types"
-import { ReleaseCombobox } from "@/features/admin/components/ReleaseCombobox"
+import { ReleaseCombobox } from "@/features/admin/releases/components/ReleaseCombobox"
 
 type EditState = {
   price: string

@@ -6,8 +6,8 @@ import type { ListingStatus } from "@/features/listings/types"
 import { fetchStores } from "@/features/stores/api/stores"
 import type { Release } from "@/features/releases/types"
 import type { Store } from "@/features/stores/types"
-import { ReleaseCombobox } from "@/features/admin/components/ReleaseCombobox"
-import { StoreCombobox } from "@/features/admin/components/StoreCombobox"
+import { ReleaseCombobox } from "@/features/admin/releases/components/ReleaseCombobox"
+import { StoreCombobox } from "@/features/admin/stores/components/StoreCombobox"
 
 type Props = {
   releases: Release[]

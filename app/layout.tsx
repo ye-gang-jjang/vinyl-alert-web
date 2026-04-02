@@ -16,6 +16,7 @@ const geistMono = Geist_Mono({
 })
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID
+const ADSENSE_CLIENT_ID = "ca-pub-5593063456188264"
 
 export const metadata: Metadata = {
   title: "L Pick | 원하는 LP를 한눈에",
@@ -42,6 +43,12 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head>
+        <Script
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT_ID}`}
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+
         {GA_ID ? (
           <>
             <Script

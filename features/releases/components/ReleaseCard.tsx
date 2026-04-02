@@ -45,7 +45,7 @@ export function ReleaseCard({
               fill
               sizes="96px"
               className="h-full w-full object-cover"
-              quality={70}
+              quality={85}
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-xs text-gray-400">

@@ -72,7 +72,7 @@ export default function RootLayout({
       >
         <Header />
 
-        <main className="mx-auto w-full max-w-5xl flex-1 p-4">{children}</main>
+        <main className="mx-auto w-full max-w-6xl flex-1 p-4">{children}</main>
 
         <Footer />
       </body>

@@ -39,13 +39,13 @@ export default function ReleaseControls({
   onReset,
 }: Props) {
   return (
-    <div className="flex flex-col gap-3 rounded-xl border p-4 sm:flex-row sm:items-center sm:justify-between">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+    <div className="rounded-xl border p-4">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto] xl:items-end">
         {/* 정렬 */}
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium">정렬</span>
+        <div className="flex flex-col gap-2">
+          <span className="text-sm font-medium text-gray-700">정렬</span>
           <select
-            className="h-9 rounded-md border bg-white px-2 text-sm"
+            className="h-10 w-full rounded-md border bg-white px-3 text-sm"
             value={selectedSort}
             onChange={(e) => onSortChange(e.target.value as ReleaseSortKey)}
           >
@@ -74,8 +74,9 @@ export default function ReleaseControls({
         />
       </div>
 
-      <div className="flex items-center gap-2">
-        <Button type="button" variant="outline" onClick={onReset}>
+      <div className="flex flex-col gap-2">
+        <span className="select-none text-sm font-medium text-transparent">초기화</span>
+        <Button type="button" variant="outline" onClick={onReset} className="h-10 px-4">
           필터 초기화
         </Button>
       </div>
@@ -99,18 +100,23 @@ function StringCombobox({
   const [open, setOpen] = React.useState(false)
 
   return (
-    <div className="flex items-center gap-2">
-      <span className="text-sm font-medium">{label}</span>
+    <div className="flex flex-col gap-2">
+      <span className="text-sm font-medium text-gray-700">{label}</span>
 
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button type="button" variant="outline" role="combobox" className="w-[220px] justify-between">
+          <Button
+            type="button"
+            variant="outline"
+            role="combobox"
+            className="h-10 w-full justify-between px-3"
+          >
             <span className="truncate">{value ? value : placeholder}</span>
             <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
           </Button>
         </PopoverTrigger>
 
-        <PopoverContent className="w-[220px] p-0">
+        <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
           <Command>
             <CommandInput placeholder={`${label} 검색...`} />
             <CommandList>
@@ -172,12 +178,17 @@ function StoreComboboxLite({
   const selectedLabel = selectedStore?.name ?? placeholder
 
   return (
-    <div className="flex items-center gap-2">
-      <span className="text-sm font-medium">{label}</span>
+    <div className="flex flex-col gap-2">
+      <span className="text-sm font-medium text-gray-700">{label}</span>
 
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button type="button" variant="outline" role="combobox" className="w-[220px] justify-between">
+          <Button
+            type="button"
+            variant="outline"
+            role="combobox"
+            className="h-10 w-full justify-between px-3"
+          >
             <div className="flex min-w-0 items-center gap-2">
               <div className="h-5 w-5 shrink-0 overflow-hidden rounded bg-white">
                 {selectedIconUrl ? (
@@ -194,7 +205,7 @@ function StoreComboboxLite({
           </Button>
         </PopoverTrigger>
 
-        <PopoverContent className="w-[220px] p-0">
+        <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
           <Command>
             <CommandInput placeholder={`${label} 검색...`} />
             <CommandList>

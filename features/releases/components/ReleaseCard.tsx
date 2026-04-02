@@ -55,19 +55,19 @@ export function ReleaseCard({
         </div>
 
         {/* Text */}
-        <div className="min-w-0 flex-1">
+        <div className="flex min-w-0 flex-1 flex-col justify-center">
           {/* 아티스트명 */}
           <div className="truncate text-sm font-medium text-gray-700">
             {artist}
           </div>
 
           {/* 앨범명 */}
-          <div className="mt-0.5 line-clamp-2 min-h-[3rem] text-base font-semibold leading-6">
+          <div className="mt-1 line-clamp-2 min-h-[2.75rem] text-base font-semibold leading-6">
             {album}
           </div>
 
           {/* 메타 정보 */}
-          <div className="mt-2 space-y-1 text-xs text-gray-500">
+          <div className="mt-1.5 space-y-0.5 text-xs text-gray-500">
             <div>판매처 {storesCount} </div>
             <div>최근 업데이트: {collectedText}</div>
           </div>

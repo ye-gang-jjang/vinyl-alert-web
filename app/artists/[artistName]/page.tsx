@@ -7,7 +7,7 @@ type PageProps = {
   searchParams: Promise<{ page?: string }>
 }
 
-const PAGE_SIZE = 24
+const PAGE_SIZE = 18
 
 function parsePage(value?: string) {
   const parsed = Number(value ?? "1")

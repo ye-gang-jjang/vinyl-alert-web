@@ -23,7 +23,7 @@ type SearchParams = {
   page?: string;
 };
 
-const PAGE_SIZE = 24;
+const PAGE_SIZE = 18;
 
 export default async function HomePage({
   searchParams,

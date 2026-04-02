@@ -1,7 +1,9 @@
 export const revalidate = 60;
 
 import { HomePageClient } from "@/features/releases/components/HomePageClient";
+import { PaginationNav } from "@/features/releases/components/PaginationNav";
 import { fetchReleaseSummaries } from "@/features/releases/api/releases";
+import type { PaginatedReleaseSummaries } from "@/features/releases/types";
 
 type SortKey = "default" | "artist_asc" | "album_asc";
 
@@ -9,11 +11,19 @@ function uniqSorted(arr: string[]) {
   return Array.from(new Set(arr)).sort((a, b) => a.localeCompare(b));
 }
 
+function parsePage(value?: string) {
+  const parsed = Number(value ?? "1");
+  return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : 1;
+}
+
 type SearchParams = {
   sort?: string;
   artist?: string;
   store?: string;
+  page?: string;
 };
+
+const PAGE_SIZE = 24;
 
 export default async function HomePage({
   searchParams,
@@ -22,9 +32,15 @@ export default async function HomePage({
 }) {
   const sp = await searchParams;
 
-  let releases = [];
+  let data: PaginatedReleaseSummaries;
   try {
-    releases = await fetchReleaseSummaries();
+    data = await fetchReleaseSummaries({
+      page: parsePage(sp.page),
+      pageSize: PAGE_SIZE,
+      artist: sp.artist,
+      store: sp.store,
+      sort: sp.sort,
+    });
   } catch {
     return (
       <div className="space-y-6">
@@ -47,16 +63,32 @@ export default async function HomePage({
   const selectedSort = (sp.sort as SortKey) || "default";
   const selectedArtist = sp.artist ?? "";
   const selectedStore = sp.store ?? "";
-
-  const artists = uniqSorted(releases.map((r) => r.artistName));
+  const currentPage = data.page;
+  const artists = uniqSorted(data.artists);
 
   return (
-    <HomePageClient
-      releases={releases}
-      artists={artists}
-      initialSort={selectedSort}
-      initialArtist={selectedArtist}
-      initialStore={selectedStore}
-    />
+    <div className="space-y-6">
+      <HomePageClient
+        releases={data.items}
+        artists={artists}
+        stores={data.stores}
+        page={currentPage}
+        total={data.total}
+        initialSort={selectedSort}
+        initialArtist={selectedArtist}
+        initialStore={selectedStore}
+      />
+
+      <PaginationNav
+        pathname="/"
+        page={currentPage}
+        totalPages={data.totalPages}
+        params={{
+          ...(selectedSort !== "default" ? { sort: selectedSort } : {}),
+          ...(selectedArtist ? { artist: selectedArtist } : {}),
+          ...(selectedStore ? { store: selectedStore } : {}),
+        }}
+      />
+    </div>
   );
 }

@@ -1,8 +1,13 @@
 import type { Listing, ListingStatus } from "@/features/listings/types"
-import type { Release, ReleaseSummary } from "@/features/releases/types"
+import type { PaginatedReleaseSummaries, Release, ReleaseSummary } from "@/features/releases/types"
 import type { StoreRef } from "@/features/stores/types"
 
-import type { ListingDto, ReleaseDto, ReleaseSummaryDto } from "./dto"
+import type {
+  ListingDto,
+  PaginatedReleaseSummariesDto,
+  ReleaseDto,
+  ReleaseSummaryDto,
+} from "./dto"
 
 function normalizeStatus(status: unknown): ListingStatus {
   if (status === "ON_SALE" || status === "PREORDER" || status === "SOLD_OUT") {
@@ -57,5 +62,19 @@ function mapStoreRefDto(dto: StoreRef): StoreRef {
     slug: dto.slug,
     name: dto.name,
     iconUrl: dto.iconUrl,
+  }
+}
+
+export function mapPaginatedReleaseSummariesDto(
+  dto: PaginatedReleaseSummariesDto,
+): PaginatedReleaseSummaries {
+  return {
+    items: Array.isArray(dto.items) ? dto.items.map(mapReleaseSummaryDto) : [],
+    page: dto.page,
+    pageSize: dto.pageSize,
+    total: dto.total,
+    totalPages: dto.totalPages,
+    artists: Array.isArray(dto.artists) ? dto.artists : [],
+    stores: Array.isArray(dto.stores) ? dto.stores.map(mapStoreRefDto) : [],
   }
 }

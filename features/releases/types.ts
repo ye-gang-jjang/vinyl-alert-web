@@ -22,3 +22,13 @@ export type ReleaseSummary = {
   collectedAt?: string | null
   latestCollectedAt?: string | null
 }
+
+export type PaginatedReleaseSummaries = {
+  items: ReleaseSummary[]
+  page: number
+  pageSize: number
+  total: number
+  totalPages: number
+  artists: string[]
+  stores: StoreRef[]
+}

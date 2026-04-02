@@ -1,13 +1,48 @@
-import type { Release, ReleaseSummary } from "@/features/releases/types"
+import type { PaginatedReleaseSummaries, Release } from "@/features/releases/types"
 import { apiUrl, PUBLIC_REVALIDATE_SECONDS } from "@/shared/api/client"
 
-import type { ReleaseDto, ReleaseSummaryDto } from "./dto"
-import { mapReleaseDto, mapReleaseSummaryDto } from "./mappers"
+import type { PaginatedReleaseSummariesDto, ReleaseDto } from "./dto"
+import { mapPaginatedReleaseSummariesDto, mapReleaseDto } from "./mappers"
 
 export type CreateReleasePayload = {
   artistName: string
   albumTitle: string
   coverImageUrl?: string
+}
+
+type FetchReleaseSummaryParams = {
+  page?: number
+  pageSize?: number
+  artist?: string
+  store?: string
+  sort?: string
+}
+
+function buildSummaryQuery(params: FetchReleaseSummaryParams) {
+  const query = new URLSearchParams()
+
+  if (params.page && params.page > 1) {
+    query.set("page", String(params.page))
+  }
+
+  if (params.pageSize) {
+    query.set("pageSize", String(params.pageSize))
+  }
+
+  if (params.artist) {
+    query.set("artist", params.artist)
+  }
+
+  if (params.store) {
+    query.set("store", params.store)
+  }
+
+  if (params.sort && params.sort !== "default") {
+    query.set("sort", params.sort)
+  }
+
+  const queryString = query.toString()
+  return queryString ? `?${queryString}` : ""
 }
 
 export async function fetchNewReleases(): Promise<Release[]> {
@@ -23,8 +58,10 @@ export async function fetchNewReleases(): Promise<Release[]> {
   return Array.isArray(data) ? data.map(mapReleaseDto) : []
 }
 
-export async function fetchReleaseSummaries(): Promise<ReleaseSummary[]> {
-  const res = await fetch(apiUrl("/release-summaries"), {
+export async function fetchReleaseSummaries(
+  params: FetchReleaseSummaryParams = {},
+): Promise<PaginatedReleaseSummaries> {
+  const res = await fetch(apiUrl(`/release-summaries${buildSummaryQuery(params)}`), {
     next: { revalidate: PUBLIC_REVALIDATE_SECONDS },
   })
 
@@ -32,24 +69,28 @@ export async function fetchReleaseSummaries(): Promise<ReleaseSummary[]> {
     throw new Error("Failed to fetch release summaries")
   }
 
-  const data: ReleaseSummaryDto[] = await res.json()
-  return Array.isArray(data) ? data.map(mapReleaseSummaryDto) : []
+  const data: PaginatedReleaseSummariesDto = await res.json()
+  return mapPaginatedReleaseSummariesDto(data)
 }
 
 export async function fetchReleaseSummariesByArtistName(
   artistName: string,
-): Promise<ReleaseSummary[]> {
+  params: Pick<FetchReleaseSummaryParams, "page" | "pageSize"> = {},
+): Promise<PaginatedReleaseSummaries> {
   const encodedArtistName = encodeURIComponent(artistName)
-  const res = await fetch(apiUrl(`/artists/${encodedArtistName}/release-summaries`), {
+  const res = await fetch(
+    apiUrl(`/artists/${encodedArtistName}/release-summaries${buildSummaryQuery(params)}`),
+    {
     next: { revalidate: PUBLIC_REVALIDATE_SECONDS },
-  })
+    },
+  )
 
   if (!res.ok) {
     throw new Error("Failed to fetch artist release summaries")
   }
 
-  const data: ReleaseSummaryDto[] = await res.json()
-  return Array.isArray(data) ? data.map(mapReleaseSummaryDto) : []
+  const data: PaginatedReleaseSummariesDto = await res.json()
+  return mapPaginatedReleaseSummariesDto(data)
 }
 
 export async function fetchReleaseById(id: string): Promise<Release | null> {

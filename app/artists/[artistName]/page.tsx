@@ -1,14 +1,28 @@
 import { fetchReleaseSummariesByArtistName } from "@/features/releases/api/releases"
+import { PaginationNav } from "@/features/releases/components/PaginationNav"
 import { ReleaseCard } from "@/features/releases/components/ReleaseCard"
 
 type PageProps = {
   params: Promise<{ artistName: string }>
+  searchParams: Promise<{ page?: string }>
 }
 
-export default async function ArtistPage({ params }: PageProps) {
-  const { artistName } = await params
+const PAGE_SIZE = 24
 
-  const releases = await fetchReleaseSummariesByArtistName(artistName)
+function parsePage(value?: string) {
+  const parsed = Number(value ?? "1")
+  return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : 1
+}
+
+export default async function ArtistPage({ params, searchParams }: PageProps) {
+  const { artistName } = await params
+  const sp = await searchParams
+
+  const paginated = await fetchReleaseSummariesByArtistName(artistName, {
+    page: parsePage(sp.page),
+    pageSize: PAGE_SIZE,
+  })
+  const releases = paginated.items
 
   return (
     <div className="space-y-6">
@@ -17,7 +31,7 @@ export default async function ArtistPage({ params }: PageProps) {
         <p className="mt-2 text-sm text-gray-600">등록된 릴리즈</p>
       </header>
 
-      <section className="grid gap-4 sm:grid-cols-2">
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {releases.map((r) => (
           <ReleaseCard
             key={r.id}
@@ -34,6 +48,12 @@ export default async function ArtistPage({ params }: PageProps) {
       {releases.length === 0 && (
         <p className="text-sm text-gray-600">아직 등록된 릴리즈가 없습니다.</p>
       )}
+
+      <PaginationNav
+        pathname={`/artists/${encodeURIComponent(artistName)}`}
+        page={paginated.page}
+        totalPages={paginated.totalPages}
+      />
     </div>
   )
 }

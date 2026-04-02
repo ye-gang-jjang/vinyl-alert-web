@@ -40,7 +40,8 @@ export default function ReleaseControls({
 }: Props) {
   return (
     <div className="rounded-xl border p-4">
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto] xl:items-end">
+      <div className="flex flex-col gap-3 xl:flex-row xl:items-end xl:justify-between">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3 xl:flex-1">
         {/* 정렬 */}
         <div className="flex flex-col gap-2">
           <span className="text-sm font-medium text-gray-700">정렬</span>
@@ -72,13 +73,13 @@ export default function ReleaseControls({
           value={selectedStore}
           onChange={onStoreChange}
         />
-      </div>
+        </div>
 
-      <div className="flex flex-col gap-2">
-        <span className="select-none text-sm font-medium text-transparent">초기화</span>
-        <Button type="button" variant="outline" onClick={onReset} className="h-10 px-4">
-          필터 초기화
-        </Button>
+        <div className="flex xl:justify-end">
+          <Button type="button" variant="outline" onClick={onReset} className="h-10 px-4">
+            필터 초기화
+          </Button>
+        </div>
       </div>
     </div>
   )

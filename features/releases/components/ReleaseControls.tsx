@@ -15,6 +15,12 @@ import { Check, ChevronsUpDown } from "lucide-react"
 import type { StoreRef } from "@/features/stores/types"
 import type { ReleaseSortKey } from "@/features/releases/lib/filtering"
 
+const SORT_OPTIONS: Array<{ value: ReleaseSortKey; label: string }> = [
+  { value: "default", label: "최신 등록 순" },
+  { value: "artist_asc", label: "가수명 ㄱ→ㅎ" },
+  { value: "album_asc", label: "앨범명 ㄱ→ㅎ" },
+]
+
 type Props = {
   artists: string[]
   stores: StoreRef[]
@@ -43,18 +49,7 @@ export default function ReleaseControls({
       <div className="flex flex-col gap-3 xl:flex-row xl:items-end xl:justify-between">
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3 xl:flex-1">
         {/* 정렬 */}
-        <div className="flex flex-col gap-2">
-          <span className="text-sm font-medium text-gray-700">정렬</span>
-          <select
-            className="h-10 w-full rounded-md border bg-white px-3 text-sm"
-            value={selectedSort}
-            onChange={(e) => onSortChange(e.target.value as ReleaseSortKey)}
-          >
-            <option value="default">최신 등록 순</option>
-            <option value="artist_asc">가수명 ㄱ→ㅎ</option>
-            <option value="album_asc">앨범명 ㄱ→ㅎ</option>
-          </select>
-        </div>
+        <SortCombobox label="정렬" value={selectedSort} onChange={onSortChange} />
 
         {/* 가수 필터 (콤보박스) */}
         <StringCombobox
@@ -81,6 +76,65 @@ export default function ReleaseControls({
           </Button>
         </div>
       </div>
+    </div>
+  )
+}
+
+function SortCombobox({
+  label,
+  value,
+  onChange,
+}: {
+  label: string
+  value: ReleaseSortKey
+  onChange: (value: ReleaseSortKey) => void
+}) {
+  const [open, setOpen] = React.useState(false)
+  const selectedOption = SORT_OPTIONS.find((option) => option.value === value)
+
+  return (
+    <div className="flex flex-col gap-2">
+      <span className="text-sm font-medium text-gray-700">{label}</span>
+
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            type="button"
+            variant="outline"
+            role="combobox"
+            className="h-10 w-full justify-between px-3"
+          >
+            <span className="truncate">{selectedOption?.label ?? "정렬 선택"}</span>
+            <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+
+        <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
+          <Command>
+            <CommandList>
+              <CommandGroup>
+                {SORT_OPTIONS.map((option) => {
+                  const isSelected = value === option.value
+
+                  return (
+                    <CommandItem
+                      key={option.value}
+                      value={option.label}
+                      onSelect={() => {
+                        onChange(option.value)
+                        setOpen(false)
+                      }}
+                    >
+                      <Check className={`mr-2 h-4 w-4 ${isSelected ? "opacity-100" : "opacity-0"}`} />
+                      {option.label}
+                    </CommandItem>
+                  )
+                })}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
     </div>
   )
 }

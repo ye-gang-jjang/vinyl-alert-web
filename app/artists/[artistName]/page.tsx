@@ -31,7 +31,7 @@ export default async function ArtistPage({ params, searchParams }: PageProps) {
         <p className="mt-2 text-sm text-gray-600">등록된 릴리즈</p>
       </header>
 
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <section className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
         {releases.map((r) => (
           <ReleaseCard
             key={r.id}

@@ -35,15 +35,15 @@ export function ReleaseCard({
         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-300
       "
     >
-      <div className="flex gap-4 p-4">
+      <div className="flex min-h-[7.5rem] gap-4 p-5">
         {/* Cover image */}
-        <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border bg-white">
+        <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg border bg-white">
           {coverImageUrl ? (
             <Image
               src={coverImageUrl}
               alt={`${artist} - ${album} cover`}
               fill
-              sizes="80px"
+              sizes="96px"
               className="h-full w-full object-cover"
               quality={70}
             />
@@ -62,12 +62,12 @@ export function ReleaseCard({
           </div>
 
           {/* 앨범명 */}
-          <div className="mt-0.5 truncate text-base font-semibold leading-6">
+          <div className="mt-1 truncate text-lg font-semibold leading-7">
             {album}
           </div>
 
           {/* 메타 정보 */}
-          <div className="mt-1 space-y-0 text-xs text-gray-500">
+          <div className="mt-1.5 space-y-0.5 text-sm text-gray-500">
             <div>판매처 {storesCount} </div>
             <div>최근 업데이트: {collectedText}</div>
           </div>

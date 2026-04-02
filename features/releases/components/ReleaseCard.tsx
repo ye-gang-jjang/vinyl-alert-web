@@ -62,7 +62,9 @@ export function ReleaseCard({
           </div>
 
           {/* 앨범명 */}
-          <div className="truncate text-base font-semibold">{album}</div>
+          <div className="mt-0.5 line-clamp-2 min-h-[3rem] text-base font-semibold leading-6">
+            {album}
+          </div>
 
           {/* 메타 정보 */}
           <div className="mt-2 space-y-1 text-xs text-gray-500">

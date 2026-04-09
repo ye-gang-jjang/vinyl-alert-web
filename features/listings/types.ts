@@ -1,5 +1,3 @@
-export type ListingStatus = "ON_SALE" | "PREORDER" | "SOLD_OUT"
-
 export type Listing = {
   id: string
   sourceName: string
@@ -9,5 +7,4 @@ export type Listing = {
   collectedAt: string
   latestCollectedAt?: string | null
   price?: number | null
-  status?: ListingStatus
 }

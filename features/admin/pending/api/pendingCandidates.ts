@@ -7,7 +7,6 @@ export type ApprovePendingCandidatePayload = {
   albumTitle?: string
   coverImageUrl?: string
   price?: number | null
-  status?: "ON_SALE" | "PREORDER" | "SOLD_OUT"
 }
 
 export async function fetchPendingCandidates(): Promise<PendingCandidate[]> {

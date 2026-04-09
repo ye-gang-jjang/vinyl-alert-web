@@ -2,14 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { deleteListing, updateListing } from "@/features/listings/api/listings"
-import type { ListingStatus } from "@/features/listings/types"
 import { deleteRelease } from "@/features/releases/api/releases"
 import type { Release } from "@/features/releases/types"
 import { ReleaseCombobox } from "@/features/admin/releases/components/ReleaseCombobox"
 
 type EditState = {
   price: string
-  status: ListingStatus
   dirty: boolean
 }
 
@@ -51,13 +49,11 @@ export function ManageReleaseListings({
 
     const next: Record<string, EditState> = {}
     for (const l of selectedRelease.listings) {
-      const currentStatus = (l.status ?? "ON_SALE") as ListingStatus
       const currentPrice =
         l.price === null || typeof l.price === "undefined" ? "" : String(l.price)
 
       next[l.id] = {
         price: currentPrice,
-        status: currentStatus,
         dirty: false,
       }
     }
@@ -66,7 +62,7 @@ export function ManageReleaseListings({
 
   function setEdit(listingId: string, patch: Partial<EditState>) {
     setEditMap((prev) => {
-      const current = prev[listingId] ?? { price: "", status: "ON_SALE", dirty: false }
+      const current = prev[listingId] ?? { price: "", dirty: false }
       return {
         ...prev,
         [listingId]: {
@@ -83,11 +79,9 @@ export function ManageReleaseListings({
     if (!edit) return
 
     const normalizedPrice =
-      edit.status === "SOLD_OUT"
+      edit.price.trim() === ""
         ? null
-        : edit.price.trim() === ""
-          ? null
-          : Number(edit.price.replaceAll(",", ""))
+        : Number(edit.price.replaceAll(",", ""))
 
     if (normalizedPrice !== null && Number.isNaN(normalizedPrice)) {
       setStatus?.("❌ 가격은 숫자만 입력해 주세요.")
@@ -101,7 +95,6 @@ export function ManageReleaseListings({
     try {
       await updateListing(listingId, {
         price: normalizedPrice,
-        status: edit.status,
       })
       setStatus?.("✅ 판매처 정보를 수정했습니다.")
       await onRefreshReleases()
@@ -168,7 +161,6 @@ export function ManageReleaseListings({
                   l.price === null || typeof l.price === "undefined"
                     ? ""
                     : String(l.price),
-                status: ((l.status ?? "ON_SALE") as ListingStatus) ?? "ON_SALE",
                 dirty: false,
               }
 
@@ -220,28 +212,7 @@ export function ManageReleaseListings({
                   </div>
 
                   {/* ✅ 수정 영역 */}
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                    <div className="space-y-1">
-                      <label className="block text-xs text-gray-600">상태</label>
-                      <select
-                        className="w-full rounded-lg border p-2 text-sm"
-                        value={edit.status}
-                        onChange={(e) => {
-                          const nextStatus = e.target.value as ListingStatus
-                          // 품절로 바꾸면 가격은 비우는 UX
-                          setEdit(l.id, {
-                            status: nextStatus,
-                            price: nextStatus === "SOLD_OUT" ? "" : edit.price,
-                          })
-                        }}
-                        disabled={isLoading || isLoadingGlobal}
-                      >
-                        <option value="ON_SALE">판매중</option>
-                        <option value="PREORDER">발매예정</option>
-                        <option value="SOLD_OUT">품절</option>
-                      </select>
-                    </div>
-
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
                     <div className="space-y-1">
                       <label className="block text-xs text-gray-600">가격(원)</label>
                       <input
@@ -250,11 +221,7 @@ export function ManageReleaseListings({
                         onChange={(e) => setEdit(l.id, { price: e.target.value })}
                         placeholder="예: 39000"
                         inputMode="numeric"
-                        disabled={
-                          isLoading ||
-                          isLoadingGlobal ||
-                          edit.status === "SOLD_OUT"
-                        }
+                        disabled={isLoading || isLoadingGlobal}
                       />
                     </div>
 
@@ -274,9 +241,7 @@ export function ManageReleaseListings({
                     </div>
                   </div>
 
-                  <p className="text-xs text-gray-500">
-                    * 품절이면 가격을 비워도 됩니다. (저장 시 null 처리)
-                  </p>
+                  <p className="text-xs text-gray-500">* 가격을 비우면 null로 저장됩니다.</p>
                 </li>
               )
             })}

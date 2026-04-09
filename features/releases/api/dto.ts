@@ -1,4 +1,3 @@
-import type { ListingStatus } from "@/features/listings/types"
 import type { StoreRef } from "@/features/stores/types"
 
 export type ListingDto = {
@@ -10,7 +9,6 @@ export type ListingDto = {
   collectedAt: string
   latestCollectedAt?: string | null
   price?: number | null
-  status?: ListingStatus
 }
 
 export type ReleaseDto = {

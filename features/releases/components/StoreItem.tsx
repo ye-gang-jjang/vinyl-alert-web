@@ -1,8 +1,6 @@
 import Image from "next/image"
 import { formatCollectedAgo } from "@/shared/lib/formatters/formatCollectedAgo"
 
-type ListingStatus = "ON_SALE" | "PREORDER" | "SOLD_OUT"
-
 type StoreItemProps = {
   name: string
   title: string
@@ -11,17 +9,10 @@ type StoreItemProps = {
   collectedAt?: string | null
 
   price?: number | null
-  status?: ListingStatus | null
 }
 
-function displayMeta(status?: ListingStatus | null, price?: number | null) {
-  const s: ListingStatus = status ?? "ON_SALE"
-
-  if (s === "SOLD_OUT") return "품절"
-  if (s === "PREORDER") {
-    return price ? `발매예정 · ${price.toLocaleString()}원` : "발매예정"
-  }
-  return price ? `판매중 · ${price.toLocaleString()}원` : "판매중 · 가격 정보 없음"
+function displayMeta(price?: number | null) {
+  return price ? `${price.toLocaleString()}원` : "가격 정보 없음"
 }
 
 export function StoreItem({
@@ -31,10 +22,9 @@ export function StoreItem({
   imageUrl,
   collectedAt,
   price,
-  status,
 }: StoreItemProps) {
   const collectedText = formatCollectedAgo({ collectedAt })
-  const metaText = displayMeta(status, price)
+  const metaText = displayMeta(price)
 
   return (
     <a

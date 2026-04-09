@@ -1,4 +1,4 @@
-import type { Listing, ListingStatus } from "@/features/listings/types"
+import type { Listing } from "@/features/listings/types"
 import type { PaginatedReleaseSummaries, Release, ReleaseSummary } from "@/features/releases/types"
 import type { StoreRef } from "@/features/stores/types"
 
@@ -8,14 +8,6 @@ import type {
   ReleaseDto,
   ReleaseSummaryDto,
 } from "./dto"
-
-function normalizeStatus(status: unknown): ListingStatus {
-  if (status === "ON_SALE" || status === "PREORDER" || status === "SOLD_OUT") {
-    return status
-  }
-
-  return "ON_SALE"
-}
 
 export function mapListingDto(dto: ListingDto): Listing {
   return {
@@ -27,7 +19,6 @@ export function mapListingDto(dto: ListingDto): Listing {
     collectedAt: dto.collectedAt,
     latestCollectedAt: dto.latestCollectedAt ?? null,
     price: dto.price ?? null,
-    status: normalizeStatus(dto.status),
   }
 }
 

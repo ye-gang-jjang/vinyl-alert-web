@@ -1,4 +1,3 @@
-import type { ListingStatus } from "@/features/listings/types"
 import type { Release } from "@/features/releases/types"
 import { mapListingDto, mapReleaseDto } from "@/features/releases/api/mappers"
 import type { ListingDto, ReleaseDto } from "@/features/releases/api/dto"
@@ -9,12 +8,10 @@ export type CreateListingPayload = {
   sourceProductTitle: string
   url: string
   price?: number | null
-  status?: ListingStatus
 }
 
 export type UpdateListingPayload = {
   price?: number | null
-  status?: ListingStatus
 }
 
 export async function addListingToRelease(

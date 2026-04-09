@@ -35,7 +35,7 @@ function NavLink({
 export function Header() {
   return (
     <header className="border-b">
-      <nav className="mx-auto flex max-w-5xl items-center gap-6 p-4">
+      <nav className="mx-auto flex max-w-6xl items-center gap-6 p-4">
         {/* 로고 + 서비스명 (Home) */}
         <Link
           href="/"

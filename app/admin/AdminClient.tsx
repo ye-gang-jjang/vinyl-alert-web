@@ -115,7 +115,7 @@ export default function AdminClient() {
       )}
 
       <Tabs defaultValue="create" className="space-y-6">
-        <TabsList className="flex w-full justify-start gap-2 overflow-x-auto rounded-xl border bg-white p-1">
+        <TabsList className="flex w-full flex-wrap justify-center gap-2 rounded-xl border bg-white p-1">
           <TabsTrigger value="pending" className="shrink-0">
             수집 후보
           </TabsTrigger>

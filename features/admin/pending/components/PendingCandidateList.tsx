@@ -31,7 +31,7 @@ export function PendingCandidateList({
   const [selectedReleaseIds, setSelectedReleaseIds] = useState<Record<string, string>>({})
 
   async function handleApprove(candidate: PendingCandidate) {
-    const selectedReleaseId = selectedReleaseIds[candidate.id] || ""
+    const selectedReleaseId = selectedReleaseIds[candidate.id] || candidate.matchedReleaseId || ""
     setStatus?.(null)
     setGlobalLoading?.(true)
 
@@ -87,7 +87,7 @@ export function PendingCandidateList({
       ) : (
         <ul className="space-y-3">
           {pendingCandidates.map((candidate) => {
-            const releaseSelection = selectedReleaseIds[candidate.id] ?? ""
+            const releaseSelection = selectedReleaseIds[candidate.id] ?? candidate.matchedReleaseId ?? ""
 
             return (
               <li key={candidate.id} className="space-y-3 rounded-lg border p-4">
@@ -95,6 +95,11 @@ export function PendingCandidateList({
                   <div className="text-sm font-semibold">{candidate.artistName} - {candidate.albumTitle}</div>
                   <div className="text-xs text-gray-500">스토어: {candidate.store.name} ({candidate.store.slug})</div>
                   <div className="text-xs text-gray-500">원본 제목: {candidate.sourceProductTitle}</div>
+                  {candidate.matchedReleaseId && (
+                    <div className="text-xs font-medium text-emerald-700">
+                      기존 앨범 자동 매칭 후보: ID {candidate.matchedReleaseId}
+                    </div>
+                  )}
                   <a href={candidate.url} target="_blank" rel="noreferrer" className="block truncate text-xs text-blue-600 underline-offset-2 hover:underline">
                     {candidate.url}
                   </a>

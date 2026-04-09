@@ -29,6 +29,7 @@ export default function AdminClient() {
 
   const [stores, setStores] = useState<Store[]>([]);
   const [pendingCandidates, setPendingCandidates] = useState<PendingCandidate[]>([]);
+  const [pendingError, setPendingError] = useState<string | null>(null);
 
   async function refreshReleases(): Promise<void> {
     setIsLoading(true);
@@ -75,15 +76,14 @@ export default function AdminClient() {
 
   async function refreshPendingCandidates(): Promise<void> {
     setIsLoading(true);
-    setError(null);
+    setPendingError(null);
 
     try {
       const data = await fetchPendingCandidates();
       setPendingCandidates(data);
     } catch (e) {
       const msg = e instanceof Error ? e.message : "pending 후보를 불러오지 못했습니다.";
-      setError(msg);
-      setStatus(`오류: ${msg}`);
+      setPendingError(msg);
     } finally {
       setIsLoading(false);
     }
@@ -188,6 +188,12 @@ export default function AdminClient() {
         </TabsContent>
 
         <TabsContent value="pending" className="space-y-6">
+          {pendingError && (
+            <div className="rounded-xl border border-yellow-200 bg-yellow-50 p-4 text-sm text-yellow-800">
+              pending 후보를 불러오지 못했습니다. 백엔드 배포나 마이그레이션 상태를 확인해 주세요. ({pendingError})
+            </div>
+          )}
+
           <PendingCandidateList
             candidates={pendingCandidates}
             releases={releases}

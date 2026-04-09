@@ -9,6 +9,9 @@ import type { Store } from "@/features/stores/types";
 
 import { AddListingForm } from "@/features/admin/listings/components/AddListingForm";
 import { ManageReleaseListings } from "@/features/admin/listings/components/ManageReleaseListings";
+import { fetchPendingCandidates } from "@/features/admin/pending/api/pendingCandidates";
+import { PendingCandidateList } from "@/features/admin/pending/components/PendingCandidateList";
+import type { PendingCandidate } from "@/features/admin/pending/types";
 import { CreateReleaseForm } from "@/features/admin/releases/components/CreateReleaseForm";
 import { CreateStoreForm } from "@/features/admin/stores/components/CreateStoreForm";
 import { StoreList } from "@/features/admin/stores/components/StoreList";
@@ -25,6 +28,7 @@ export default function AdminClient() {
   const [selectedReleaseId, setSelectedReleaseId] = useState("");
 
   const [stores, setStores] = useState<Store[]>([]);
+  const [pendingCandidates, setPendingCandidates] = useState<PendingCandidate[]>([]);
 
   async function refreshReleases(): Promise<void> {
     setIsLoading(true);
@@ -69,9 +73,26 @@ export default function AdminClient() {
     }
   }
 
+  async function refreshPendingCandidates(): Promise<void> {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const data = await fetchPendingCandidates();
+      setPendingCandidates(data);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "pending 후보를 불러오지 못했습니다.";
+      setError(msg);
+      setStatus(`오류: ${msg}`);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   useEffect(() => {
     refreshReleases();
     refreshStores();
+    refreshPendingCandidates();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -108,6 +129,10 @@ export default function AdminClient() {
 
           <TabsTrigger value="stores" className="shrink-0">
             스토어 관리
+          </TabsTrigger>
+
+          <TabsTrigger value="pending" className="shrink-0">
+            수집 후보
           </TabsTrigger>
         </TabsList>
 
@@ -158,6 +183,17 @@ export default function AdminClient() {
             stores={stores}
             onChanged={refreshStores}
             isLoadingGlobal={isLoading}
+            setStatus={setStatus}
+          />
+        </TabsContent>
+
+        <TabsContent value="pending" className="space-y-6">
+          <PendingCandidateList
+            candidates={pendingCandidates}
+            releases={releases}
+            onChanged={refreshPendingCandidates}
+            isLoadingGlobal={isLoading}
+            setGlobalLoading={setIsLoading}
             setStatus={setStatus}
           />
         </TabsContent>

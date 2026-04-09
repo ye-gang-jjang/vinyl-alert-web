@@ -115,7 +115,11 @@ export default function AdminClient() {
       )}
 
       <Tabs defaultValue="create" className="space-y-6">
-        <TabsList className="flex w-full gap-2 overflow-x-auto">
+        <TabsList className="flex w-full justify-start gap-2 overflow-x-auto rounded-xl border bg-white p-1">
+          <TabsTrigger value="pending" className="shrink-0">
+            수집 후보
+          </TabsTrigger>
+
           <TabsTrigger value="create" className="shrink-0">
             데이터 추가
           </TabsTrigger>
@@ -129,10 +133,6 @@ export default function AdminClient() {
 
           <TabsTrigger value="stores" className="shrink-0">
             스토어 관리
-          </TabsTrigger>
-
-          <TabsTrigger value="pending" className="shrink-0">
-            수집 후보
           </TabsTrigger>
         </TabsList>
 

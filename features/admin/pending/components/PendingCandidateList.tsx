@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { useMemo, useState } from "react"
 
 import { approvePendingCandidate, rejectPendingCandidate } from "@/features/admin/pending/api/pendingCandidates"
@@ -92,6 +93,15 @@ export function PendingCandidateList({
             return (
               <li key={candidate.id} className="space-y-3 rounded-lg border p-4">
                 <div className="space-y-1">
+                  {candidate.coverImageUrl ? (
+                    <Image
+                      src={candidate.coverImageUrl}
+                      alt={`${candidate.artistName} - ${candidate.albumTitle}`}
+                      width={96}
+                      height={96}
+                      className="h-24 w-24 rounded-md border object-cover"
+                    />
+                  ) : null}
                   <div className="text-sm font-semibold">{candidate.artistName} - {candidate.albumTitle}</div>
                   <div className="text-xs text-gray-500">스토어: {candidate.store.name} ({candidate.store.slug})</div>
                   <div className="text-xs text-gray-500">원본 제목: {candidate.sourceProductTitle}</div>

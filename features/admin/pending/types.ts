@@ -7,6 +7,7 @@ export type PendingCandidate = {
   sourceProductTitle: string
   url: string
   price?: number | null
+  coverImageUrl?: string | null
   status: "PENDING" | "APPROVED" | "REJECTED"
   note?: string | null
   createdAt?: string | null

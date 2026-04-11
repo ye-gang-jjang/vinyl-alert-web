@@ -95,6 +95,9 @@ export function PendingCandidateList({
                   <div className="text-sm font-semibold">{candidate.artistName} - {candidate.albumTitle}</div>
                   <div className="text-xs text-gray-500">스토어: {candidate.store.name} ({candidate.store.slug})</div>
                   <div className="text-xs text-gray-500">원본 제목: {candidate.sourceProductTitle}</div>
+                  <div className="text-xs text-gray-500">
+                    가격: {typeof candidate.price === "number" ? `${candidate.price.toLocaleString()}원` : "정보 없음"}
+                  </div>
                   {candidate.matchedReleaseId && (
                     <div className="text-xs font-medium text-emerald-700">
                       기존 앨범 자동 매칭 후보: ID {candidate.matchedReleaseId}

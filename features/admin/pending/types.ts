@@ -6,6 +6,7 @@ export type PendingCandidate = {
   albumTitle: string
   sourceProductTitle: string
   url: string
+  price?: number | null
   status: "PENDING" | "APPROVED" | "REJECTED"
   note?: string | null
   createdAt?: string | null

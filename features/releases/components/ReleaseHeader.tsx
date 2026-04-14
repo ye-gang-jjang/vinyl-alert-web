@@ -39,6 +39,7 @@ export function ReleaseHeader({
               alt={`${artistName} - ${albumTitle} cover`}
               fill
               priority
+              unoptimized
               sizes="(max-width: 640px) 280px, 320px"
               className="h-full w-full object-cover"
               quality={75}

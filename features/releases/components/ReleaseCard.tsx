@@ -43,6 +43,7 @@ export function ReleaseCard({
               src={coverImageUrl}
               alt={`${artist} - ${album} cover`}
               fill
+              unoptimized
               sizes="96px"
               className="h-full w-full object-cover"
               quality={85}

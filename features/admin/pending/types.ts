@@ -1,5 +1,13 @@
 import type { StoreRef } from "@/features/stores/types"
 
+export type PendingCandidateStatus = "PENDING" | "APPROVED" | "REJECTED"
+
+export const PENDING_CANDIDATE_STATUS_LABELS: Record<PendingCandidateStatus, string> = {
+  PENDING: "검수 대기",
+  APPROVED: "승인됨",
+  REJECTED: "거절됨",
+}
+
 export type PendingCandidate = {
   id: string
   artistName: string
@@ -8,7 +16,7 @@ export type PendingCandidate = {
   url: string
   price?: number | null
   coverImageUrl?: string | null
-  status: "PENDING" | "APPROVED" | "REJECTED"
+  status: PendingCandidateStatus
   note?: string | null
   createdAt?: string | null
   reviewedAt?: string | null

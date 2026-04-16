@@ -1,4 +1,4 @@
-import type { PendingCandidate } from "@/features/admin/pending/types"
+import type { PendingCandidate, PendingCandidateStatus } from "@/features/admin/pending/types"
 import { apiUrl } from "@/shared/api/client"
 
 export type ApprovePendingCandidatePayload = {
@@ -9,10 +9,42 @@ export type ApprovePendingCandidatePayload = {
   price?: number | null
 }
 
-export async function fetchPendingCandidates(): Promise<PendingCandidate[]> {
-  const res = await fetch(apiUrl("/pending-candidates"), { cache: "no-store" })
+export type FetchPendingCandidatesParams = {
+  status?: PendingCandidateStatus | "ALL"
+  storeSlug?: string
+  query?: string
+}
+
+export async function fetchPendingCandidates(params: FetchPendingCandidatesParams = {}): Promise<PendingCandidate[]> {
+  const searchParams = new URLSearchParams()
+  if (params.status && params.status !== "ALL") {
+    searchParams.set("status", params.status)
+  }
+  if (params.storeSlug && params.storeSlug !== "ALL") {
+    searchParams.set("storeSlug", params.storeSlug)
+  }
+  if (params.query?.trim()) {
+    searchParams.set("q", params.query.trim())
+  }
+
+  const queryString = searchParams.toString()
+  const path = queryString ? `/pending-candidates?${queryString}` : "/pending-candidates"
+  const res = await fetch(apiUrl(path), { cache: "no-store" })
   if (!res.ok) {
     throw new Error("Failed to fetch pending candidates")
+  }
+  return res.json()
+}
+
+export async function bulkRejectPendingCandidates(candidateIds: string[], note?: string) {
+  const res = await fetch(apiUrl("/pending-candidates/bulk/reject"), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ candidateIds, note }),
+  })
+  if (!res.ok) {
+    const body = await res.text().catch(() => "")
+    throw new Error(`일괄 거절 실패 (${res.status})${body ? `: ${body}` : ""}`)
   }
   return res.json()
 }

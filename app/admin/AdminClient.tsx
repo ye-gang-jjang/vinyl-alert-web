@@ -197,6 +197,7 @@ export default function AdminClient() {
           <PendingCandidateList
             candidates={pendingCandidates}
             releases={releases}
+            stores={stores}
             onChanged={refreshPendingCandidates}
             isLoadingGlobal={isLoading}
             setGlobalLoading={setIsLoading}

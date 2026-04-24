@@ -39,6 +39,7 @@ export default async function ArtistPage({ params, searchParams }: PageProps) {
             artist={r.artistName}
             album={r.albumTitle}
             coverImageUrl={r.coverImageUrl}
+            viewCount={r.viewCount}
             storesCount={r.storesCount}
             latestCollectedAt={r.latestCollectedAt ?? null}
           />

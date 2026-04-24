@@ -114,6 +114,7 @@ export function HomePageClient({
               artist={release.artistName}
               album={release.albumTitle}
               coverImageUrl={release.coverImageUrl}
+              viewCount={release.viewCount}
               storesCount={release.storesCount}
               latestCollectedAt={release.latestCollectedAt ?? null}
             />

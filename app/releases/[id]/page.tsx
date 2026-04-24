@@ -33,8 +33,10 @@ export default async function ReleasePage({ params }: PageProps) {
       </Link>
 
       <ReleaseHeader
+        releaseId={release.id}
         artistName={release.artistName}
         albumTitle={release.albumTitle}
+        viewCount={release.viewCount}
         storesCount={release.storesCount}
         coverImageUrl={release.coverImageUrl}
         latestCollectedAt={release.latestCollectedAt}

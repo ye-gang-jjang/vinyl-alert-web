@@ -6,6 +6,7 @@ export type Release = {
   artistName: string
   albumTitle: string
   coverImageUrl?: string
+  viewCount: number
   storesCount: number
   listings: Listing[]
   collectedAt?: string | null
@@ -17,6 +18,7 @@ export type ReleaseSummary = {
   artistName: string
   albumTitle: string
   coverImageUrl?: string
+  viewCount: number
   storesCount: number
   stores: StoreRef[]
   collectedAt?: string | null

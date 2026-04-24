@@ -106,6 +106,29 @@ export async function fetchReleaseById(id: string): Promise<Release | null> {
   return mapReleaseDto(data)
 }
 
+export async function recordReleaseView(id: string): Promise<number | null> {
+  const res = await fetch(apiUrl(`/releases/${id}/view`), {
+    method: "POST",
+  })
+
+  if (!res.ok) {
+    return null
+  }
+
+  const text = await res.text()
+
+  if (!text) {
+    return null
+  }
+
+  try {
+    const data = JSON.parse(text) as { viewCount?: number }
+    return typeof data.viewCount === "number" ? data.viewCount : null
+  } catch {
+    return null
+  }
+}
+
 export async function fetchReleasesByArtistName(artistName: string): Promise<Release[]> {
   const releases = await fetchNewReleases()
   return releases.filter((release) => release.artistName === artistName)

@@ -16,6 +16,7 @@ export type ReleaseDto = {
   artistName: string
   albumTitle: string
   coverImageUrl?: string
+  viewCount?: number
   storesCount: number
   listings: ListingDto[]
   collectedAt?: string | null
@@ -27,6 +28,7 @@ export type ReleaseSummaryDto = {
   artistName: string
   albumTitle: string
   coverImageUrl?: string
+  viewCount?: number
   storesCount: number
   stores: StoreRef[]
   collectedAt?: string | null

@@ -1,17 +1,23 @@
 import Image from "next/image"
+
+import { ReleaseViewCount } from "@/features/releases/components/ReleaseViewCount"
 import { formatCollectedAgo } from "@/shared/lib/formatters/formatCollectedAgo"
 
 type ReleaseHeaderProps = {
+  releaseId: string
   artistName: string
   albumTitle: string
+  viewCount: number
   storesCount: number
   coverImageUrl?: string
   latestCollectedAt?: string | null
 }
 
 export function ReleaseHeader({
+  releaseId,
   artistName,
   albumTitle,
+  viewCount,
   storesCount,
   coverImageUrl,
   latestCollectedAt,
@@ -25,9 +31,12 @@ export function ReleaseHeader({
           {artistName} — {albumTitle}
         </h1>
 
-        <div className="text-sm text-gray-600">
-          판매처 {storesCount} · 최근 업데이트: {collectedText}
-        </div>
+        <ReleaseViewCount
+          releaseId={releaseId}
+          initialViewCount={viewCount}
+          storesCount={storesCount}
+          collectedText={collectedText}
+        />
       </div>
 
       {/* Cover image */}

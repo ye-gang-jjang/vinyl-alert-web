@@ -7,6 +7,7 @@ import {
   approvePendingCandidate,
   bulkApprovePendingCandidates,
   bulkRejectPendingCandidates,
+  reopenPendingCandidate,
   rejectPendingCandidate,
 } from "@/features/admin/pending/api/pendingCandidates"
 import {
@@ -130,12 +131,11 @@ export function PendingCandidateList({
   }
 
   async function handleReject(candidate: PendingCandidate) {
-    const note = window.prompt("거절 메모를 남길까요?", "") ?? ""
     setStatus?.(null)
     setGlobalLoading?.(true)
 
     try {
-      await rejectPendingCandidate(candidate.id, note || undefined)
+      await rejectPendingCandidate(candidate.id)
       setSelectedCandidateIds((prev) => ({ ...prev, [candidate.id]: false }))
       setStatus?.(`거절 처리: ${candidate.artistName} - ${candidate.albumTitle}`)
       await onChanged()
@@ -152,17 +152,32 @@ export function PendingCandidateList({
       return
     }
 
-    const note = window.prompt("선택 항목에 공통 거절 메모를 남길까요?", "") ?? ""
     setStatus?.(null)
     setGlobalLoading?.(true)
 
     try {
-      const result = await bulkRejectPendingCandidates(selectedVisiblePendingIds, note || undefined)
+      const result = await bulkRejectPendingCandidates(selectedVisiblePendingIds)
       setSelectedCandidateIds({})
       setStatus?.(`선택 항목 ${result.updatedCount}건을 거절 처리했어요.`)
       await onChanged()
     } catch (error) {
       const msg = error instanceof Error ? error.message : "pending 후보 일괄 거절 실패"
+      setStatus?.(`오류: ${msg}`)
+    } finally {
+      setGlobalLoading?.(false)
+    }
+  }
+
+  async function handleReopen(candidate: PendingCandidate) {
+    setStatus?.(null)
+    setGlobalLoading?.(true)
+
+    try {
+      await reopenPendingCandidate(candidate.id)
+      setStatus?.(`다시 검토로 복구: ${candidate.artistName} - ${candidate.albumTitle}`)
+      await onChanged()
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : "pending 후보 다시 검토 실패"
       setStatus?.(`오류: ${msg}`)
     } finally {
       setGlobalLoading?.(false)
@@ -381,7 +396,6 @@ export function PendingCandidateList({
                           기존 앨범 자동 매칭 후보: ID {candidate.matchedReleaseId}
                         </div>
                       )}
-                      {candidate.note ? <div className="text-xs text-gray-500">메모: {candidate.note}</div> : null}
                       <a
                         href={candidate.url}
                         target="_blank"
@@ -428,6 +442,17 @@ export function PendingCandidateList({
                           </button>
                         </div>
                       </>
+                    ) : candidate.status === "REJECTED" ? (
+                      <div className="flex flex-wrap gap-2">
+                        <button
+                          type="button"
+                          className="rounded-md border border-blue-300 bg-blue-50 px-3 py-2 text-sm text-blue-700 hover:bg-blue-100 disabled:opacity-50"
+                          onClick={() => handleReopen(candidate)}
+                          disabled={isLoadingGlobal}
+                        >
+                          다시 검토
+                        </button>
+                      </div>
                     ) : null}
                   </div>
                 </div>

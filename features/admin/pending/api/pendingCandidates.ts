@@ -36,11 +36,11 @@ export async function fetchPendingCandidates(params: FetchPendingCandidatesParam
   return res.json()
 }
 
-export async function bulkRejectPendingCandidates(candidateIds: string[], note?: string) {
+export async function bulkRejectPendingCandidates(candidateIds: string[]) {
   const res = await fetch(apiUrl("/pending-candidates/bulk/reject"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ candidateIds, note }),
+    body: JSON.stringify({ candidateIds }),
   })
   if (!res.ok) {
     const body = await res.text().catch(() => "")
@@ -62,6 +62,19 @@ export async function bulkApprovePendingCandidates(items: Array<{ candidateId: s
   return res.json()
 }
 
+export async function reopenPendingCandidate(candidateId: string) {
+  const res = await fetch(apiUrl(`/pending-candidates/${candidateId}/reopen`), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({}),
+  })
+  if (!res.ok) {
+    const body = await res.text().catch(() => "")
+    throw new Error(`다시 검토 실패 (${res.status})${body ? `: ${body}` : ""}`)
+  }
+  return res.json()
+}
+
 export async function approvePendingCandidate(
   candidateId: string,
   payload: ApprovePendingCandidatePayload,
@@ -78,11 +91,11 @@ export async function approvePendingCandidate(
   return res.json()
 }
 
-export async function rejectPendingCandidate(candidateId: string, note?: string) {
+export async function rejectPendingCandidate(candidateId: string) {
   const res = await fetch(apiUrl(`/pending-candidates/${candidateId}/reject`), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ note }),
+    body: JSON.stringify({}),
   })
   if (!res.ok) {
     const body = await res.text().catch(() => "")

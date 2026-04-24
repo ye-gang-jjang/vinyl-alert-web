@@ -17,7 +17,6 @@ export type PendingCandidate = {
   price?: number | null
   coverImageUrl?: string | null
   status: PendingCandidateStatus
-  note?: string | null
   createdAt?: string | null
   reviewedAt?: string | null
   matchedReleaseId?: string | null

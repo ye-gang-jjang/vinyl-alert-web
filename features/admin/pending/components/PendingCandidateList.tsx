@@ -5,6 +5,7 @@ import { useMemo, useState } from "react"
 
 import {
   approvePendingCandidate,
+  bulkApprovePendingCandidates,
   bulkRejectPendingCandidates,
   rejectPendingCandidate,
 } from "@/features/admin/pending/api/pendingCandidates"
@@ -168,6 +169,32 @@ export function PendingCandidateList({
     }
   }
 
+  async function handleBulkApprove() {
+    if (selectedVisiblePendingIds.length === 0) {
+      return
+    }
+
+    const items = selectedVisiblePendingIds.map((candidateId) => {
+      const releaseId = selectedReleaseIds[candidateId]
+      return releaseId ? { candidateId, releaseId } : { candidateId }
+    })
+
+    setStatus?.(null)
+    setGlobalLoading?.(true)
+
+    try {
+      const result = await bulkApprovePendingCandidates(items)
+      setSelectedCandidateIds({})
+      setStatus?.(`선택 항목 ${result.updatedCount}건을 승인 처리했어요.`)
+      await onChanged()
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : "pending 후보 일괄 승인 실패"
+      setStatus?.(`오류: ${msg}`)
+    } finally {
+      setGlobalLoading?.(false)
+    }
+  }
+
   return (
     <section className="space-y-4 rounded-xl border p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -186,6 +213,14 @@ export function PendingCandidateList({
             disabled={isLoadingGlobal}
           >
             새로고침
+          </button>
+          <button
+            type="button"
+            className="rounded-lg border border-green-300 bg-green-50 px-3 py-2 text-sm text-green-800 hover:bg-green-100 disabled:opacity-50"
+            onClick={handleBulkApprove}
+            disabled={isLoadingGlobal || selectedVisiblePendingIds.length === 0}
+          >
+            선택 항목 승인 {selectedVisiblePendingIds.length > 0 ? `(${selectedVisiblePendingIds.length})` : ""}
           </button>
           <button
             type="button"

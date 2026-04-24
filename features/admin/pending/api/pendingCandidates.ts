@@ -49,6 +49,19 @@ export async function bulkRejectPendingCandidates(candidateIds: string[], note?:
   return res.json()
 }
 
+export async function bulkApprovePendingCandidates(items: Array<{ candidateId: string; releaseId?: string }>) {
+  const res = await fetch(apiUrl("/pending-candidates/bulk/approve"), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ items }),
+  })
+  if (!res.ok) {
+    const body = await res.text().catch(() => "")
+    throw new Error(`일괄 승인 실패 (${res.status})${body ? `: ${body}` : ""}`)
+  }
+  return res.json()
+}
+
 export async function approvePendingCandidate(
   candidateId: string,
   payload: ApprovePendingCandidatePayload,

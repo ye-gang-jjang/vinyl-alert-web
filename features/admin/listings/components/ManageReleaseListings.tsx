@@ -5,14 +5,19 @@ import { deleteListing, updateListing } from "@/features/listings/api/listings"
 import { deleteRelease } from "@/features/releases/api/releases"
 import type { Release } from "@/features/releases/types"
 import { ReleaseCombobox } from "@/features/admin/releases/components/ReleaseCombobox"
+import { StoreCombobox } from "@/features/admin/stores/components/StoreCombobox"
+import type { Store } from "@/features/stores/types"
 
 type EditState = {
+  storeSlug: string
+  sourceProductTitle: string
   price: string
   dirty: boolean
 }
 
 type Props = {
   releases: Release[]
+  stores: Store[]
   selectedReleaseId: string
   onSelectReleaseId: (id: string) => void
   onRefreshReleases: () => Promise<void>
@@ -23,6 +28,7 @@ type Props = {
 
 export function ManageReleaseListings({
   releases,
+  stores,
   selectedReleaseId,
   onSelectReleaseId,
   onRefreshReleases,
@@ -53,16 +59,23 @@ export function ManageReleaseListings({
         l.price === null || typeof l.price === "undefined" ? "" : String(l.price)
 
       next[l.id] = {
+        storeSlug: stores.find((store) => store.name === l.sourceName)?.slug ?? "",
+        sourceProductTitle: l.sourceProductTitle,
         price: currentPrice,
         dirty: false,
       }
     }
     setEditMap(next)
-  }, [selectedRelease])
+  }, [selectedRelease, stores])
 
   function setEdit(listingId: string, patch: Partial<EditState>) {
     setEditMap((prev) => {
-      const current = prev[listingId] ?? { price: "", dirty: false }
+      const current = prev[listingId] ?? {
+        storeSlug: "",
+        sourceProductTitle: "",
+        price: "",
+        dirty: false,
+      }
       return {
         ...prev,
         [listingId]: {
@@ -77,6 +90,16 @@ export function ManageReleaseListings({
   async function onSave(listingId: string) {
     const edit = editMap[listingId]
     if (!edit) return
+
+    if (!edit.storeSlug) {
+      setStatus?.("❌ 스토어를 선택해 주세요.")
+      return
+    }
+
+    if (!edit.sourceProductTitle.trim()) {
+      setStatus?.("❌ 상품 제목을 입력해 주세요.")
+      return
+    }
 
     const normalizedPrice =
       edit.price.trim() === ""
@@ -94,6 +117,8 @@ export function ManageReleaseListings({
 
     try {
       await updateListing(listingId, {
+        storeSlug: edit.storeSlug,
+        sourceProductTitle: edit.sourceProductTitle.trim(),
         price: normalizedPrice,
       })
       setStatus?.("✅ 판매처 정보를 수정했습니다.")
@@ -157,6 +182,8 @@ export function ManageReleaseListings({
           <ul className="space-y-2">
             {selectedRelease.listings.map((l) => {
               const edit = editMap[l.id] ?? {
+                storeSlug: stores.find((store) => store.name === l.sourceName)?.slug ?? "",
+                sourceProductTitle: l.sourceProductTitle,
                 price:
                   l.price === null || typeof l.price === "undefined"
                     ? ""
@@ -212,7 +239,30 @@ export function ManageReleaseListings({
                   </div>
 
                   {/* ✅ 수정 영역 */}
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto]">
+                    <div className="space-y-1">
+                      <label className="block text-xs text-gray-600">판매처</label>
+                      <StoreCombobox
+                        stores={stores}
+                        value={edit.storeSlug}
+                        onChange={(slug) => setEdit(l.id, { storeSlug: slug })}
+                        disabled={isLoading || isLoadingGlobal || stores.length === 0}
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="block text-xs text-gray-600">상품 제목</label>
+                      <input
+                        className="w-full rounded-lg border p-2 text-sm"
+                        value={edit.sourceProductTitle}
+                        onChange={(e) =>
+                          setEdit(l.id, { sourceProductTitle: e.target.value })
+                        }
+                        placeholder="판매처에 표시되는 제목"
+                        disabled={isLoading || isLoadingGlobal}
+                      />
+                    </div>
+
                     <div className="space-y-1">
                       <label className="block text-xs text-gray-600">가격(원)</label>
                       <input
@@ -241,7 +291,7 @@ export function ManageReleaseListings({
                     </div>
                   </div>
 
-                  <p className="text-xs text-gray-500">* 가격을 비우면 null로 저장됩니다.</p>
+                  <p className="text-xs text-gray-500">* 제목/판매처/가격을 수정할 수 있고, 가격을 비우면 null로 저장됩니다.</p>
                 </li>
               )
             })}

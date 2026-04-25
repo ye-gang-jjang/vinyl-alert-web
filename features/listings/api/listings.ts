@@ -11,6 +11,8 @@ export type CreateListingPayload = {
 }
 
 export type UpdateListingPayload = {
+  storeSlug?: string
+  sourceProductTitle?: string
   price?: number | null
 }
 

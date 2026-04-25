@@ -162,6 +162,7 @@ export default function AdminClient() {
         <TabsContent value="cleanup" className="space-y-6">
           <ManageReleaseListings
             releases={releases}
+            stores={stores}
             selectedReleaseId={selectedReleaseId}
             onSelectReleaseId={setSelectedReleaseId}
             onRefreshReleases={refreshReleases}

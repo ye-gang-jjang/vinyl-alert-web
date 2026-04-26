@@ -17,12 +17,10 @@ import {
 } from "@/features/admin/pending/types"
 import { ReleaseCombobox } from "@/features/admin/releases/components/ReleaseCombobox"
 import type { ReleaseOption } from "@/features/releases/types"
-import type { Store } from "@/features/stores/types"
 
 type Props = {
   candidates: PendingCandidate[]
   releases: ReleaseOption[]
-  stores: Store[]
   onChanged: () => Promise<void>
   onLoadMoreReleases?: () => Promise<void>
   hasMoreReleases?: boolean
@@ -42,7 +40,6 @@ const STATUS_FILTER_OPTIONS: Array<{ value: PendingCandidateStatus | "ALL"; labe
 export function PendingCandidateList({
   candidates,
   releases,
-  stores,
   onChanged,
   onLoadMoreReleases,
   hasMoreReleases,
@@ -72,6 +69,16 @@ export function PendingCandidateList({
       acc[candidate.store.slug] = (acc[candidate.store.slug] ?? 0) + 1
       return acc
     }, {})
+  }, [candidates])
+
+  const availableStores = useMemo(() => {
+    const storeMap = new Map<string, PendingCandidate["store"]>()
+    for (const candidate of candidates) {
+      if (!storeMap.has(candidate.store.slug)) {
+        storeMap.set(candidate.store.slug, candidate.store)
+      }
+    }
+    return Array.from(storeMap.values()).sort((a, b) => a.name.localeCompare(b.name))
   }, [candidates])
 
   const filteredCandidates = useMemo(() => {
@@ -314,8 +321,8 @@ export function PendingCandidateList({
               className="w-full rounded-md border px-3 py-2 text-sm"
             >
               <option value="ALL">전체 스토어</option>
-              {stores.map((store) => (
-                <option key={store.id} value={store.slug}>
+              {availableStores.map((store) => (
+                <option key={store.slug} value={store.slug}>
                   {store.name} ({countsByStore[store.slug] ?? 0})
                 </option>
               ))}
@@ -331,11 +338,11 @@ export function PendingCandidateList({
           >
             전체 ({candidates.length})
           </button>
-          {stores
+          {availableStores
             .filter((store) => (countsByStore[store.slug] ?? 0) > 0)
             .map((store) => (
               <button
-                key={store.id}
+                key={store.slug}
                 type="button"
                 onClick={() => setStoreFilter(store.slug)}
                 className={`rounded-full border px-3 py-1 text-xs ${storeFilter === store.slug ? "border-gray-900 bg-gray-900 text-white" : "bg-white text-gray-600"}`}

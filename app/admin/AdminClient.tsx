@@ -25,6 +25,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 const RELEASE_OPTIONS_PAGE_SIZE = 10;
 
 export default function AdminClient() {
+  const [activeTab, setActiveTab] = useState("create");
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -178,16 +179,32 @@ export default function AdminClient() {
   }, []);
 
   const refreshAdminPageData = useCallback(async () => {
+    if (activeTab === "pending") {
+      await refreshPendingCandidates();
+      return;
+    }
+
+    if (activeTab === "stores") {
+      await refreshStores();
+      return;
+    }
+
     await Promise.all([
       refreshReleaseOptions(selectedReleaseId || undefined),
       refreshStores(),
-      refreshPendingCandidates(),
     ]);
 
     if (selectedReleaseId) {
       await refreshSelectedRelease(selectedReleaseId);
     }
-  }, [refreshPendingCandidates, refreshReleaseOptions, refreshSelectedRelease, refreshStores, selectedReleaseId]);
+  }, [
+    activeTab,
+    refreshPendingCandidates,
+    refreshReleaseOptions,
+    refreshSelectedRelease,
+    refreshStores,
+    selectedReleaseId,
+  ]);
 
   useRefreshOnFocus({
     refresh: refreshAdminPageData,
@@ -227,7 +244,7 @@ export default function AdminClient() {
         </div>
       )}
 
-      <Tabs defaultValue="create" className="space-y-6">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="flex w-full flex-wrap justify-center gap-2 rounded-xl border bg-white p-1">
           <TabsTrigger value="pending" className="shrink-0">
             수집 후보
@@ -319,7 +336,6 @@ export default function AdminClient() {
           <PendingCandidateList
             candidates={pendingCandidates}
             releases={releaseOptions}
-            stores={stores}
             onChanged={refreshPendingCandidates}
             onLoadMoreReleases={loadMoreReleaseOptions}
             hasMoreReleases={hasMoreReleaseOptions}

@@ -69,6 +69,7 @@ export default async function HomePage({
   return (
     <div className="space-y-6">
       <HomePageClient
+        key={`${selectedSort}:${selectedArtist}:${selectedStore}:${currentPage}`}
         releases={data.items}
         artists={artists}
         stores={data.stores}

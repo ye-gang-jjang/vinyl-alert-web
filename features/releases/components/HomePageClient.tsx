@@ -1,12 +1,14 @@
 "use client"
 
-import { useMemo } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { usePathname, useRouter } from "next/navigation"
+import { fetchReleaseSummaries } from "@/features/releases/api/releases"
 import ReleaseControls from "@/features/releases/components/ReleaseControls"
 import { ReleaseCard } from "@/features/releases/components/ReleaseCard"
 import {
   type ReleaseSortKey,
 } from "@/features/releases/lib/filtering"
+import { useRefreshOnFocus } from "@/shared/hooks/useRefreshOnFocus"
 import type { ReleaseSummary } from "@/features/releases/types"
 import type { StoreRef } from "@/features/stores/types"
 
@@ -33,8 +35,31 @@ export function HomePageClient({
 }: Props) {
   const pathname = usePathname()
   const router = useRouter()
+  const [releaseItems, setReleaseItems] = useState(releases)
+  const [artistOptions, setArtistOptions] = useState(artists)
+  const [storeItems, setStoreItems] = useState(stores)
+  const [releaseTotal, setReleaseTotal] = useState(total)
 
-  const storeOptions = useMemo(() => stores, [stores])
+  const storeOptions = useMemo(() => storeItems, [storeItems])
+
+  const refreshReleases = useCallback(async () => {
+    const data = await fetchReleaseSummaries({
+      page,
+      pageSize: 18,
+      artist: initialArtist || undefined,
+      store: initialStore || undefined,
+      sort: initialSort,
+    })
+
+    setReleaseItems(data.items)
+    setArtistOptions(data.artists)
+    setStoreItems(data.stores)
+    setReleaseTotal(data.total)
+  }, [initialArtist, initialSort, initialStore, page])
+
+  useRefreshOnFocus({
+    refresh: refreshReleases,
+  })
 
   function updateFilters(next: {
     sort?: ReleaseSortKey
@@ -76,7 +101,7 @@ export function HomePageClient({
   return (
     <div className="space-y-6">
       <ReleaseControls
-        artists={artists}
+        artists={artistOptions}
         stores={storeOptions}
         selectedArtist={initialArtist}
         selectedStore={initialStore}
@@ -89,7 +114,7 @@ export function HomePageClient({
 
       <div className="flex min-w-0 flex-col gap-1 text-sm text-gray-600 sm:flex-row sm:items-center sm:justify-between">
         <span className="min-w-0">
-          총 <span className="font-medium text-gray-900">{total}</span>개
+          총 <span className="font-medium text-gray-900">{releaseTotal}</span>개
           릴리즈
         </span>
 
@@ -98,7 +123,7 @@ export function HomePageClient({
         )}
       </div>
 
-      {releases.length === 0 ? (
+      {releaseItems.length === 0 ? (
         <div className="space-y-2 rounded-xl border p-6">
           <p className="text-sm font-medium">조건에 맞는 릴리즈가 없습니다.</p>
           <p className="text-sm text-gray-600">
@@ -107,7 +132,7 @@ export function HomePageClient({
         </div>
       ) : (
         <section className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:gap-6 lg:grid-cols-3">
-          {releases.map((release) => (
+          {releaseItems.map((release) => (
             <ReleaseCard
               key={release.id}
               id={release.id}

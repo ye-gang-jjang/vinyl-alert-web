@@ -18,6 +18,9 @@ type Props = {
   releases: ReleaseOption[]
   selectedReleaseId: string
   onSelectReleaseId: (id: string) => void
+  onLoadMore?: () => Promise<void> | void
+  hasMore?: boolean
+  isLoadingMore?: boolean
   disabled?: boolean
 }
 
@@ -49,6 +52,9 @@ export function ReleaseCombobox({
   releases,
   selectedReleaseId,
   onSelectReleaseId,
+  onLoadMore,
+  hasMore,
+  isLoadingMore,
   disabled,
 }: Props) {
   const [open, setOpen] = React.useState(false)
@@ -122,6 +128,20 @@ export function ReleaseCombobox({
                 )
               })}
             </CommandGroup>
+
+            {hasMore && onLoadMore ? (
+              <div className="border-t p-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full justify-center"
+                  onClick={() => void onLoadMore()}
+                  disabled={disabled || isLoadingMore}
+                >
+                  {isLoadingMore ? "불러오는 중..." : "릴리즈 10개 더 불러오기"}
+                </Button>
+              </div>
+            ) : null}
           </CommandList>
         </Command>
       </PopoverContent>

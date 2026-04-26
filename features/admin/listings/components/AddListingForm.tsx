@@ -118,19 +118,11 @@ export function AddListingForm({
           releases={releases}
           selectedReleaseId={selectedReleaseId}
           onSelectReleaseId={onSelectReleaseId}
+          onLoadMore={onLoadMoreReleaseOptions}
+          hasMore={hasMoreReleaseOptions}
+          isLoadingMore={isLoadingMoreReleaseOptions}
           disabled={releases.length === 0 || isLoading || isLoadingGlobal}
         />
-
-        {hasMoreReleaseOptions && onLoadMoreReleaseOptions ? (
-          <button
-            type="button"
-            className="rounded-lg border px-3 py-2 text-sm hover:bg-gray-50 disabled:opacity-50"
-            onClick={() => onLoadMoreReleaseOptions()}
-            disabled={isLoading || isLoadingGlobal || isLoadingMoreReleaseOptions}
-          >
-            {isLoadingMoreReleaseOptions ? "불러오는 중..." : "릴리즈 10개 더 불러오기"}
-          </button>
-        ) : null}
 
         <div className="flex items-center gap-2">
           <button

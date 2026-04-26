@@ -441,6 +441,9 @@ export function PendingCandidateList({
                             onSelectReleaseId={(releaseId) => {
                               setSelectedReleaseIds((prev) => ({ ...prev, [candidate.id]: releaseId }))
                             }}
+                            onLoadMore={onLoadMoreReleases}
+                            hasMore={hasMoreReleases}
+                            isLoadingMore={isLoadingMoreReleases}
                             disabled={isLoadingGlobal}
                           />
                         </div>

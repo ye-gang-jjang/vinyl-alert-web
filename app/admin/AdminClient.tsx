@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import {
   fetchReleaseById,
@@ -19,6 +19,7 @@ import { CreateReleaseForm } from "@/features/admin/releases/components/CreateRe
 import { CreateStoreForm } from "@/features/admin/stores/components/CreateStoreForm";
 import { StoreList } from "@/features/admin/stores/components/StoreList";
 
+import { useRefreshOnFocus } from "@/shared/hooks/useRefreshOnFocus";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const RELEASE_OPTIONS_PAGE_SIZE = 10;
@@ -42,7 +43,7 @@ export default function AdminClient() {
 
   const hasMoreReleaseOptions = releaseOptionsPage < releaseOptionsTotalPages;
 
-  async function refreshReleaseOptions(preferredSelectedId?: string): Promise<void> {
+  const refreshReleaseOptions = useCallback(async (preferredSelectedId?: string): Promise<void> => {
     setIsLoading(true);
     setError(null);
 
@@ -78,9 +79,9 @@ export default function AdminClient() {
     } finally {
       setIsLoading(false);
     }
-  }
+  }, [selectedReleaseId]);
 
-  async function loadMoreReleaseOptions(): Promise<void> {
+  const loadMoreReleaseOptions = useCallback(async (): Promise<void> => {
     if (isLoadingMoreReleaseOptions || !hasMoreReleaseOptions) {
       return;
     }
@@ -110,9 +111,9 @@ export default function AdminClient() {
     } finally {
       setIsLoadingMoreReleaseOptions(false);
     }
-  }
+  }, [hasMoreReleaseOptions, isLoadingMoreReleaseOptions, releaseOptionsPage]);
 
-  async function refreshSelectedRelease(releaseId: string): Promise<void> {
+  const refreshSelectedRelease = useCallback(async (releaseId: string): Promise<void> => {
     if (!releaseId) {
       setSelectedRelease(null);
       return;
@@ -137,14 +138,14 @@ export default function AdminClient() {
     } finally {
       setIsLoading(false);
     }
-  }
+  }, []);
 
-  async function handleReleaseDeleted(): Promise<void> {
+  const handleReleaseDeleted = useCallback(async (): Promise<void> => {
     setSelectedRelease(null);
     await refreshReleaseOptions();
-  }
+  }, [refreshReleaseOptions]);
 
-  async function refreshStores(): Promise<void> {
+  const refreshStores = useCallback(async (): Promise<void> => {
     setIsLoading(true);
     setError(null);
 
@@ -159,9 +160,9 @@ export default function AdminClient() {
     } finally {
       setIsLoading(false);
     }
-  }
+  }, []);
 
-  async function refreshPendingCandidates(): Promise<void> {
+  const refreshPendingCandidates = useCallback(async (): Promise<void> => {
     setIsLoading(true);
     setPendingError(null);
 
@@ -174,7 +175,23 @@ export default function AdminClient() {
     } finally {
       setIsLoading(false);
     }
-  }
+  }, []);
+
+  const refreshAdminPageData = useCallback(async () => {
+    await Promise.all([
+      refreshReleaseOptions(selectedReleaseId || undefined),
+      refreshStores(),
+      refreshPendingCandidates(),
+    ]);
+
+    if (selectedReleaseId) {
+      await refreshSelectedRelease(selectedReleaseId);
+    }
+  }, [refreshPendingCandidates, refreshReleaseOptions, refreshSelectedRelease, refreshStores, selectedReleaseId]);
+
+  useRefreshOnFocus({
+    refresh: refreshAdminPageData,
+  });
 
   useEffect(() => {
     refreshReleaseOptions();
@@ -190,7 +207,7 @@ export default function AdminClient() {
     }
 
     refreshSelectedRelease(selectedReleaseId);
-  }, [selectedReleaseId]);
+  }, [refreshSelectedRelease, selectedReleaseId]);
 
   return (
     <div className="space-y-8">

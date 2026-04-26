@@ -16,14 +16,17 @@ import {
   type PendingCandidateStatus,
 } from "@/features/admin/pending/types"
 import { ReleaseCombobox } from "@/features/admin/releases/components/ReleaseCombobox"
-import type { Release } from "@/features/releases/types"
+import type { ReleaseOption } from "@/features/releases/types"
 import type { Store } from "@/features/stores/types"
 
 type Props = {
   candidates: PendingCandidate[]
-  releases: Release[]
+  releases: ReleaseOption[]
   stores: Store[]
   onChanged: () => Promise<void>
+  onLoadMoreReleases?: () => Promise<void>
+  hasMoreReleases?: boolean
+  isLoadingMoreReleases?: boolean
   isLoadingGlobal?: boolean
   setGlobalLoading?: (value: boolean) => void
   setStatus?: (msg: string | null) => void
@@ -41,6 +44,9 @@ export function PendingCandidateList({
   releases,
   stores,
   onChanged,
+  onLoadMoreReleases,
+  hasMoreReleases,
+  isLoadingMoreReleases,
   isLoadingGlobal,
   setGlobalLoading,
   setStatus,
@@ -229,6 +235,16 @@ export function PendingCandidateList({
           >
             새로고침
           </button>
+          {hasMoreReleases && onLoadMoreReleases ? (
+            <button
+              type="button"
+              className="rounded-lg border px-3 py-2 text-sm hover:bg-gray-50 disabled:opacity-50"
+              onClick={() => onLoadMoreReleases()}
+              disabled={isLoadingGlobal || isLoadingMoreReleases}
+            >
+              {isLoadingMoreReleases ? "릴리즈 불러오는 중..." : "릴리즈 10개 더 불러오기"}
+            </button>
+          ) : null}
           <button
             type="button"
             className="rounded-lg border border-green-300 bg-green-50 px-3 py-2 text-sm text-green-800 hover:bg-green-100 disabled:opacity-50"

@@ -1,10 +1,18 @@
 import type { Listing } from "@/features/listings/types"
-import type { PaginatedReleaseSummaries, Release, ReleaseSummary } from "@/features/releases/types"
+import type {
+  PaginatedReleaseOptions,
+  PaginatedReleaseSummaries,
+  Release,
+  ReleaseOption,
+  ReleaseSummary,
+} from "@/features/releases/types"
 import type { StoreRef } from "@/features/stores/types"
 
 import type {
   ListingDto,
+  PaginatedReleaseOptionsDto,
   PaginatedReleaseSummariesDto,
+  ReleaseOptionDto,
   ReleaseDto,
   ReleaseSummaryDto,
 } from "./dto"
@@ -32,6 +40,16 @@ export function mapReleaseDto(dto: ReleaseDto): Release {
     storesCount: dto.storesCount,
     listings: Array.isArray(dto.listings) ? dto.listings.map(mapListingDto) : [],
     collectedAt: dto.collectedAt ?? null,
+    latestCollectedAt: dto.latestCollectedAt ?? null,
+  }
+}
+
+export function mapReleaseOptionDto(dto: ReleaseOptionDto): ReleaseOption {
+  return {
+    id: dto.id,
+    artistName: dto.artistName,
+    albumTitle: dto.albumTitle,
+    coverImageUrl: dto.coverImageUrl,
     latestCollectedAt: dto.latestCollectedAt ?? null,
   }
 }
@@ -69,5 +87,17 @@ export function mapPaginatedReleaseSummariesDto(
     totalPages: dto.totalPages,
     artists: Array.isArray(dto.artists) ? dto.artists : [],
     stores: Array.isArray(dto.stores) ? dto.stores.map(mapStoreRefDto) : [],
+  }
+}
+
+export function mapPaginatedReleaseOptionsDto(
+  dto: PaginatedReleaseOptionsDto,
+): PaginatedReleaseOptions {
+  return {
+    items: Array.isArray(dto.items) ? dto.items.map(mapReleaseOptionDto) : [],
+    page: dto.page,
+    pageSize: dto.pageSize,
+    total: dto.total,
+    totalPages: dto.totalPages,
   }
 }

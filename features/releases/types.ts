@@ -13,6 +13,14 @@ export type Release = {
   latestCollectedAt?: string | null
 }
 
+export type ReleaseOption = {
+  id: string
+  artistName: string
+  albumTitle: string
+  coverImageUrl?: string
+  latestCollectedAt?: string | null
+}
+
 export type ReleaseSummary = {
   id: string
   artistName: string
@@ -33,4 +41,12 @@ export type PaginatedReleaseSummaries = {
   totalPages: number
   artists: string[]
   stores: StoreRef[]
+}
+
+export type PaginatedReleaseOptions = {
+  items: ReleaseOption[]
+  page: number
+  pageSize: number
+  total: number
+  totalPages: number
 }

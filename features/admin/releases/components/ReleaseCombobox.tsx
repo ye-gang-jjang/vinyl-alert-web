@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import type { Release } from "@/features/releases/types"
+import type { ReleaseOption } from "@/features/releases/types"
 import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import {
@@ -15,7 +15,7 @@ import {
 import { Check, ChevronsUpDown } from "lucide-react"
 
 type Props = {
-  releases: Release[]
+  releases: ReleaseOption[]
   selectedReleaseId: string
   onSelectReleaseId: (id: string) => void
   disabled?: boolean

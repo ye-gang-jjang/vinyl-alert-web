@@ -35,6 +35,14 @@ export type ReleaseSummaryDto = {
   latestCollectedAt?: string | null
 }
 
+export type ReleaseOptionDto = {
+  id: string
+  artistName: string
+  albumTitle: string
+  coverImageUrl?: string
+  latestCollectedAt?: string | null
+}
+
 export type PaginatedReleaseSummariesDto = {
   items: ReleaseSummaryDto[]
   page: number
@@ -43,4 +51,12 @@ export type PaginatedReleaseSummariesDto = {
   totalPages: number
   artists: string[]
   stores: StoreRef[]
+}
+
+export type PaginatedReleaseOptionsDto = {
+  items: ReleaseOptionDto[]
+  page: number
+  pageSize: number
+  total: number
+  totalPages: number
 }

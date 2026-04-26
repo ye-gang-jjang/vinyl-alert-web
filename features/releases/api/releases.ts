@@ -1,8 +1,20 @@
-import type { PaginatedReleaseSummaries, Release } from "@/features/releases/types"
+import type {
+  PaginatedReleaseOptions,
+  PaginatedReleaseSummaries,
+  Release,
+} from "@/features/releases/types"
 import { apiUrl, PUBLIC_REVALIDATE_SECONDS } from "@/shared/api/client"
 
-import type { PaginatedReleaseSummariesDto, ReleaseDto } from "./dto"
-import { mapPaginatedReleaseSummariesDto, mapReleaseDto } from "./mappers"
+import type {
+  PaginatedReleaseOptionsDto,
+  PaginatedReleaseSummariesDto,
+  ReleaseDto,
+} from "./dto"
+import {
+  mapPaginatedReleaseOptionsDto,
+  mapPaginatedReleaseSummariesDto,
+  mapReleaseDto,
+} from "./mappers"
 
 export type CreateReleasePayload = {
   artistName: string
@@ -71,6 +83,21 @@ export async function fetchReleaseSummaries(
 
   const data: PaginatedReleaseSummariesDto = await res.json()
   return mapPaginatedReleaseSummariesDto(data)
+}
+
+export async function fetchReleaseOptions(
+  params: Pick<FetchReleaseSummaryParams, "page" | "pageSize" | "sort"> = {},
+): Promise<PaginatedReleaseOptions> {
+  const res = await fetch(apiUrl(`/release-options${buildSummaryQuery(params)}`), {
+    next: { revalidate: PUBLIC_REVALIDATE_SECONDS },
+  })
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch release options")
+  }
+
+  const data: PaginatedReleaseOptionsDto = await res.json()
+  return mapPaginatedReleaseOptionsDto(data)
 }
 
 export async function fetchReleaseSummariesByArtistName(

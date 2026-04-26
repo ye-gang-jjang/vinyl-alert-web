@@ -1,9 +1,9 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import { deleteListing, updateListing } from "@/features/listings/api/listings"
 import { deleteRelease } from "@/features/releases/api/releases"
-import type { Release } from "@/features/releases/types"
+import type { Release, ReleaseOption } from "@/features/releases/types"
 import { ReleaseCombobox } from "@/features/admin/releases/components/ReleaseCombobox"
 import { StoreCombobox } from "@/features/admin/stores/components/StoreCombobox"
 import type { Store } from "@/features/stores/types"
@@ -16,32 +16,39 @@ type EditState = {
 }
 
 type Props = {
-  releases: Release[]
+  releaseOptions: ReleaseOption[]
+  selectedRelease: Release | null
   stores: Store[]
   selectedReleaseId: string
   onSelectReleaseId: (id: string) => void
-  onRefreshReleases: () => Promise<void>
+  onRefreshSelectedRelease: (id: string) => Promise<void>
+  onRefreshReleaseOptions: () => Promise<void>
+  onLoadMoreReleaseOptions?: () => Promise<void>
+  hasMoreReleaseOptions?: boolean
+  isLoadingMoreReleaseOptions?: boolean
+  onReleaseDeleted: () => Promise<void>
   isLoadingGlobal?: boolean
   setStatus?: (msg: string | null) => void
   setGlobalLoading?: (loading: boolean) => void
 }
 
 export function ManageReleaseListings({
-  releases,
+  releaseOptions,
+  selectedRelease,
   stores,
   selectedReleaseId,
   onSelectReleaseId,
-  onRefreshReleases,
+  onRefreshSelectedRelease,
+  onRefreshReleaseOptions,
+  onLoadMoreReleaseOptions,
+  hasMoreReleaseOptions,
+  isLoadingMoreReleaseOptions,
+  onReleaseDeleted,
   isLoadingGlobal,
   setStatus,
   setGlobalLoading,
 }: Props) {
   const [isLoading, setIsLoading] = useState(false)
-
-  const selectedRelease = useMemo(
-    () => releases.find((r) => r.id === selectedReleaseId),
-    [releases, selectedReleaseId]
-  )
 
   // listingId -> edit state
   const [editMap, setEditMap] = useState<Record<string, EditState>>({})
@@ -122,7 +129,7 @@ export function ManageReleaseListings({
         price: normalizedPrice,
       })
       setStatus?.("✅ 판매처 정보를 수정했습니다.")
-      await onRefreshReleases()
+      await onRefreshSelectedRelease(selectedReleaseId)
 
       // 저장 후 dirty 해제
       setEditMap((prev) => ({
@@ -147,11 +154,31 @@ export function ManageReleaseListings({
         <label className="block text-sm font-medium">대상 릴리즈 선택</label>
 
         <ReleaseCombobox
-          releases={releases}
+          releases={releaseOptions}
           selectedReleaseId={selectedReleaseId}
           onSelectReleaseId={onSelectReleaseId}
-          disabled={releases.length === 0 || isLoading || isLoadingGlobal}
+          disabled={releaseOptions.length === 0 || isLoading || isLoadingGlobal}
         />
+
+        {hasMoreReleaseOptions && onLoadMoreReleaseOptions ? (
+          <button
+            type="button"
+            className="rounded-lg border px-3 py-2 text-sm hover:bg-gray-50 disabled:opacity-50"
+            onClick={() => onLoadMoreReleaseOptions()}
+            disabled={isLoading || isLoadingGlobal || isLoadingMoreReleaseOptions}
+          >
+            {isLoadingMoreReleaseOptions ? "불러오는 중..." : "릴리즈 10개 더 불러오기"}
+          </button>
+        ) : null}
+
+        <button
+          type="button"
+          className="rounded-lg border px-3 py-2 text-sm hover:bg-gray-50 disabled:opacity-50"
+          onClick={() => onRefreshReleaseOptions()}
+          disabled={isLoading || isLoadingGlobal}
+        >
+          목록 새로고침
+        </button>
 
         {selectedReleaseId && (
           <p className="text-xs text-gray-500">
@@ -223,7 +250,7 @@ export function ManageReleaseListings({
                         try {
                           await deleteListing(l.id)
                           setStatus?.("✅ 판매처를 삭제했습니다.")
-                          await onRefreshReleases()
+                          await onRefreshSelectedRelease(selectedReleaseId)
                         } catch (err: unknown) {
                           const message =
                             err instanceof Error ? err.message : "Unknown error"
@@ -343,7 +370,7 @@ export function ManageReleaseListings({
             try {
               await deleteRelease(selectedReleaseId)
               setStatus?.("✅ 릴리즈를 삭제했습니다.")
-              await onRefreshReleases()
+              await onReleaseDeleted()
             } catch (err: unknown) {
               const message = err instanceof Error ? err.message : "Unknown error"
               setStatus?.(`❌ 릴리즈 삭제 실패: ${message}`)

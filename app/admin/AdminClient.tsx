@@ -2,8 +2,11 @@
 
 import { useEffect, useState } from "react";
 
-import { fetchNewReleases } from "@/features/releases/api/releases";
-import type { Release } from "@/features/releases/types";
+import {
+  fetchReleaseById,
+  fetchReleaseOptions,
+} from "@/features/releases/api/releases";
+import type { Release, ReleaseOption } from "@/features/releases/types";
 import { fetchStores } from "@/features/stores/api/stores";
 import type { Store } from "@/features/stores/types";
 
@@ -18,35 +21,55 @@ import { StoreList } from "@/features/admin/stores/components/StoreList";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+const RELEASE_OPTIONS_PAGE_SIZE = 10;
+
 export default function AdminClient() {
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingMoreReleaseOptions, setIsLoadingMoreReleaseOptions] = useState(false);
 
-  const [releases, setReleases] = useState<Release[]>([]);
+  const [releaseOptions, setReleaseOptions] = useState<ReleaseOption[]>([]);
+  const [releaseOptionsPage, setReleaseOptionsPage] = useState(1);
+  const [releaseOptionsTotalPages, setReleaseOptionsTotalPages] = useState(1);
   const [selectedReleaseId, setSelectedReleaseId] = useState("");
+  const [selectedRelease, setSelectedRelease] = useState<Release | null>(null);
 
   const [stores, setStores] = useState<Store[]>([]);
   const [pendingCandidates, setPendingCandidates] = useState<PendingCandidate[]>([]);
   const [pendingError, setPendingError] = useState<string | null>(null);
 
-  async function refreshReleases(): Promise<void> {
+  const hasMoreReleaseOptions = releaseOptionsPage < releaseOptionsTotalPages;
+
+  async function refreshReleaseOptions(preferredSelectedId?: string): Promise<void> {
     setIsLoading(true);
     setError(null);
 
     try {
-      const data = await fetchNewReleases();
-      setReleases(data);
+      const data = await fetchReleaseOptions({
+        page: 1,
+        pageSize: RELEASE_OPTIONS_PAGE_SIZE,
+      });
 
-      if (data.length === 0) {
+      setReleaseOptions(data.items);
+      setReleaseOptionsPage(data.page);
+      setReleaseOptionsTotalPages(data.totalPages);
+
+      if (data.items.length === 0) {
         setSelectedReleaseId("");
-      } else if (
-        !selectedReleaseId ||
-        !data.some((r) => r.id === selectedReleaseId)
-      ) {
-        setSelectedReleaseId(data[0].id);
+        setSelectedRelease(null);
+        return;
       }
+
+      const candidateSelectedId =
+        preferredSelectedId && data.items.some((item) => item.id === preferredSelectedId)
+          ? preferredSelectedId
+          : selectedReleaseId && data.items.some((item) => item.id === selectedReleaseId)
+            ? selectedReleaseId
+            : data.items[0].id;
+
+      setSelectedReleaseId(candidateSelectedId);
     } catch (e) {
       const msg =
         e instanceof Error ? e.message : "릴리즈 목록을 불러오지 못했습니다.";
@@ -55,6 +78,70 @@ export default function AdminClient() {
     } finally {
       setIsLoading(false);
     }
+  }
+
+  async function loadMoreReleaseOptions(): Promise<void> {
+    if (isLoadingMoreReleaseOptions || !hasMoreReleaseOptions) {
+      return;
+    }
+
+    setIsLoadingMoreReleaseOptions(true);
+    setError(null);
+
+    try {
+      const nextPage = releaseOptionsPage + 1;
+      const data = await fetchReleaseOptions({
+        page: nextPage,
+        pageSize: RELEASE_OPTIONS_PAGE_SIZE,
+      });
+
+      setReleaseOptions((prev) => {
+        const existingIds = new Set(prev.map((item) => item.id));
+        const nextItems = data.items.filter((item) => !existingIds.has(item.id));
+        return [...prev, ...nextItems];
+      });
+      setReleaseOptionsPage(data.page);
+      setReleaseOptionsTotalPages(data.totalPages);
+    } catch (e) {
+      const msg =
+        e instanceof Error ? e.message : "릴리즈 목록을 더 불러오지 못했습니다.";
+      setError(msg);
+      setStatus(`오류: ${msg}`);
+    } finally {
+      setIsLoadingMoreReleaseOptions(false);
+    }
+  }
+
+  async function refreshSelectedRelease(releaseId: string): Promise<void> {
+    if (!releaseId) {
+      setSelectedRelease(null);
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const data = await fetchReleaseById(releaseId);
+      setSelectedRelease(data);
+
+      if (!data) {
+        setReleaseOptions((prev) => prev.filter((item) => item.id !== releaseId));
+        setSelectedReleaseId((prev) => (prev === releaseId ? "" : prev));
+      }
+    } catch (e) {
+      const msg =
+        e instanceof Error ? e.message : "릴리즈 상세를 불러오지 못했습니다.";
+      setError(msg);
+      setStatus(`오류: ${msg}`);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function handleReleaseDeleted(): Promise<void> {
+    setSelectedRelease(null);
+    await refreshReleaseOptions();
   }
 
   async function refreshStores(): Promise<void> {
@@ -90,11 +177,20 @@ export default function AdminClient() {
   }
 
   useEffect(() => {
-    refreshReleases();
+    refreshReleaseOptions();
     refreshStores();
     refreshPendingCandidates();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!selectedReleaseId) {
+      setSelectedRelease(null);
+      return;
+    }
+
+    refreshSelectedRelease(selectedReleaseId);
+  }, [selectedReleaseId]);
 
   return (
     <div className="space-y-8">
@@ -102,7 +198,7 @@ export default function AdminClient() {
         <h1 className="text-2xl font-bold">관리자</h1>
       </header>
 
-      {isLoading && releases.length === 0 && (
+      {isLoading && releaseOptions.length === 0 && (
         <div className="rounded-xl border p-4 text-sm text-gray-600">
           릴리즈 목록을 불러오는 중...
         </div>
@@ -136,43 +232,51 @@ export default function AdminClient() {
           </TabsTrigger>
         </TabsList>
 
-        {/* 1) 데이터 추가: 릴리즈 등록 + 판매처 등록 */}
         <TabsContent value="create" className="space-y-10">
           <CreateReleaseForm
             setStatus={setStatus}
             setGlobalLoading={setIsLoading}
             onCreated={async (createdId) => {
-              await refreshReleases();
+              await refreshReleaseOptions(createdId);
               setSelectedReleaseId(createdId);
+              await refreshSelectedRelease(createdId);
             }}
           />
 
           <AddListingForm
-            releases={releases}
+            releases={releaseOptions}
             selectedReleaseId={selectedReleaseId}
             onSelectReleaseId={setSelectedReleaseId}
-            onRefreshReleases={refreshReleases}
+            onRefreshReleaseOptions={refreshReleaseOptions}
+            onLoadMoreReleaseOptions={loadMoreReleaseOptions}
+            hasMoreReleaseOptions={hasMoreReleaseOptions}
+            isLoadingMoreReleaseOptions={isLoadingMoreReleaseOptions}
+            onRefreshSelectedRelease={refreshSelectedRelease}
             isLoadingGlobal={isLoading}
             setGlobalLoading={setIsLoading}
             setStatus={setStatus}
           />
         </TabsContent>
 
-        {/* 2) 삭제/정리: 판매처 삭제 + 릴리즈 삭제 */}
         <TabsContent value="cleanup" className="space-y-6">
           <ManageReleaseListings
-            releases={releases}
+            releaseOptions={releaseOptions}
+            selectedRelease={selectedRelease}
             stores={stores}
             selectedReleaseId={selectedReleaseId}
             onSelectReleaseId={setSelectedReleaseId}
-            onRefreshReleases={refreshReleases}
+            onRefreshSelectedRelease={refreshSelectedRelease}
+            onRefreshReleaseOptions={refreshReleaseOptions}
+            onLoadMoreReleaseOptions={loadMoreReleaseOptions}
+            hasMoreReleaseOptions={hasMoreReleaseOptions}
+            isLoadingMoreReleaseOptions={isLoadingMoreReleaseOptions}
+            onReleaseDeleted={handleReleaseDeleted}
             isLoadingGlobal={isLoading}
             setGlobalLoading={setIsLoading}
             setStatus={setStatus}
           />
         </TabsContent>
 
-        {/* 3) 스토어 관리: 스토어 등록 + 스토어 목록 */}
         <TabsContent value="stores" className="space-y-10">
           <CreateStoreForm
             setStatus={setStatus}
@@ -197,9 +301,12 @@ export default function AdminClient() {
 
           <PendingCandidateList
             candidates={pendingCandidates}
-            releases={releases}
+            releases={releaseOptions}
             stores={stores}
             onChanged={refreshPendingCandidates}
+            onLoadMoreReleases={loadMoreReleaseOptions}
+            hasMoreReleases={hasMoreReleaseOptions}
+            isLoadingMoreReleases={isLoadingMoreReleaseOptions}
             isLoadingGlobal={isLoading}
             setGlobalLoading={setIsLoading}
             setStatus={setStatus}

@@ -3,16 +3,20 @@
 import { useEffect, useState } from "react"
 import { addListingToRelease } from "@/features/listings/api/listings"
 import { fetchStores } from "@/features/stores/api/stores"
-import type { Release } from "@/features/releases/types"
+import type { ReleaseOption } from "@/features/releases/types"
 import type { Store } from "@/features/stores/types"
 import { ReleaseCombobox } from "@/features/admin/releases/components/ReleaseCombobox"
 import { StoreCombobox } from "@/features/admin/stores/components/StoreCombobox"
 
 type Props = {
-  releases: Release[]
+  releases: ReleaseOption[]
   selectedReleaseId: string
   onSelectReleaseId: (id: string) => void
-  onRefreshReleases: () => Promise<void>
+  onRefreshReleaseOptions: () => Promise<void>
+  onLoadMoreReleaseOptions?: () => Promise<void>
+  hasMoreReleaseOptions?: boolean
+  isLoadingMoreReleaseOptions?: boolean
+  onRefreshSelectedRelease?: (id: string) => Promise<void>
   isLoadingGlobal?: boolean
   setStatus?: (msg: string | null) => void
   setGlobalLoading?: (loading: boolean) => void
@@ -22,7 +26,11 @@ export function AddListingForm({
   releases,
   selectedReleaseId,
   onSelectReleaseId,
-  onRefreshReleases,
+  onRefreshReleaseOptions,
+  onLoadMoreReleaseOptions,
+  hasMoreReleaseOptions,
+  isLoadingMoreReleaseOptions,
+  onRefreshSelectedRelease,
   isLoadingGlobal,
   setStatus,
   setGlobalLoading,
@@ -86,7 +94,9 @@ export function AddListingForm({
       setUrl("")
       setPrice("")
 
-      await onRefreshReleases()
+      if (onRefreshSelectedRelease) {
+        await onRefreshSelectedRelease(updated.id)
+      }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Unknown error"
       setStatus?.(`❌ 판매처 추가 실패: ${message}`)
@@ -111,11 +121,22 @@ export function AddListingForm({
           disabled={releases.length === 0 || isLoading || isLoadingGlobal}
         />
 
+        {hasMoreReleaseOptions && onLoadMoreReleaseOptions ? (
+          <button
+            type="button"
+            className="rounded-lg border px-3 py-2 text-sm hover:bg-gray-50 disabled:opacity-50"
+            onClick={() => onLoadMoreReleaseOptions()}
+            disabled={isLoading || isLoadingGlobal || isLoadingMoreReleaseOptions}
+          >
+            {isLoadingMoreReleaseOptions ? "불러오는 중..." : "릴리즈 10개 더 불러오기"}
+          </button>
+        ) : null}
+
         <div className="flex items-center gap-2">
           <button
             type="button"
             className="rounded-lg border px-3 py-2 text-sm hover:bg-gray-50 disabled:opacity-50"
-            onClick={() => onRefreshReleases()}
+            onClick={() => onRefreshReleaseOptions()}
             disabled={isLoading || isLoadingGlobal}
           >
             목록 새로고침

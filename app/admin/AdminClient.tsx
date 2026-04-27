@@ -19,7 +19,6 @@ import { CreateReleaseForm } from "@/features/admin/releases/components/CreateRe
 import { CreateStoreForm } from "@/features/admin/stores/components/CreateStoreForm";
 import { StoreList } from "@/features/admin/stores/components/StoreList";
 
-import { useRefreshOnFocus } from "@/shared/hooks/useRefreshOnFocus";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const RELEASE_OPTIONS_PAGE_SIZE = 10;
@@ -178,13 +177,16 @@ export default function AdminClient() {
     }
   }, []);
 
-  const refreshAdminPageData = useCallback(async () => {
-    if (activeTab === "pending") {
-      await refreshPendingCandidates();
+  const refreshDataForTab = useCallback(async (tab: string) => {
+    if (tab === "pending") {
+      await Promise.all([
+        refreshPendingCandidates(),
+        refreshReleaseOptions(selectedReleaseId || undefined),
+      ]);
       return;
     }
 
-    if (activeTab === "stores") {
+    if (tab === "stores") {
       await refreshStores();
       return;
     }
@@ -194,21 +196,16 @@ export default function AdminClient() {
       refreshStores(),
     ]);
 
-    if (selectedReleaseId) {
+    if (tab === "cleanup" && selectedReleaseId) {
       await refreshSelectedRelease(selectedReleaseId);
     }
   }, [
-    activeTab,
     refreshPendingCandidates,
     refreshReleaseOptions,
     refreshSelectedRelease,
     refreshStores,
     selectedReleaseId,
   ]);
-
-  useRefreshOnFocus({
-    refresh: refreshAdminPageData,
-  });
 
   useEffect(() => {
     refreshReleaseOptions();
@@ -225,6 +222,14 @@ export default function AdminClient() {
 
     refreshSelectedRelease(selectedReleaseId);
   }, [refreshSelectedRelease, selectedReleaseId]);
+
+  useEffect(() => {
+    if (!activeTab) {
+      return;
+    }
+
+    refreshDataForTab(activeTab);
+  }, [activeTab, refreshDataForTab]);
 
   return (
     <div className="space-y-8">

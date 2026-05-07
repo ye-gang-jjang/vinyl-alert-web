@@ -191,18 +191,12 @@ export default function AdminClient() {
       return;
     }
 
-    await Promise.all([
-      refreshReleaseOptions(selectedReleaseId || undefined),
-      refreshStores(),
-    ]);
-
-    if (tab === "cleanup" && selectedReleaseId) {
-      await refreshSelectedRelease(selectedReleaseId);
+    if (tab === "create" || tab === "cleanup") {
+      return;
     }
   }, [
     refreshPendingCandidates,
     refreshReleaseOptions,
-    refreshSelectedRelease,
     refreshStores,
     selectedReleaseId,
   ]);

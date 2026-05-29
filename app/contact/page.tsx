@@ -27,8 +27,6 @@ export default function ContactPage() {
           L Pick은 흩어져 있는 LP 발매·판매 정보를 한 곳에 정리해, 원하는
           바이닐을 더 빠르고 정확하게 찾을 수 있도록 만드는 서비스입니다.
           <br />
-          국내 인디, 저의 취향에 맞는 가수 위주의 앨범들이 올라올 것 같아요. (요청에 따라 추가할 생각은 있습니다.)
-          <br />
           국내 바이닐 시장이 커졌으면 하는 바램으로 시작한 프로젝트이고, 바이닐에 입문하는 사람들의 시작점이 되길 바랍니다.
         </p>
       </section>
@@ -40,7 +38,12 @@ export default function ContactPage() {
         <ul className="space-y-2 text-sm text-gray-700">
           <li className="flex gap-2">
             <span className="mt-[2px]">•</span>
-            <span>릴리즈/판매처 데이터 지속 확장 (대형 샵들 위주로 자동화가 목표입니다.)</span>
+            <span>릴리즈/판매처 데이터 지속 확장(진행중) </span>
+          </li>
+
+          <li className="flex gap-2">
+            <span className="mt-[2px]">•</span>
+            <span>온/오프라인 레코드샵 리스트</span>
           </li>
 
           <li className="flex gap-2">
@@ -48,11 +51,6 @@ export default function ContactPage() {
             <span>
               관심 릴리즈 알림 / 즐겨찾기 기능
             </span>
-          </li>
-
-          <li className="flex gap-2">
-            <span className="mt-[2px]">•</span>
-            <span>오프라인 레코드샵 지도 (고민중에 있습니다.)</span>
           </li>
         </ul>
 

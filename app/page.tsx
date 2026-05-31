@@ -54,6 +54,7 @@ export default async function HomePage({
         <div className="rounded-xl border border-red-200 bg-red-50 p-6">
           <p className="text-sm text-red-700">
             데이터를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.
+            서버 한 달 사용량을 넘겨서 월 초에 찾아주세요...ㅜ
           </p>
         </div>
       </div>

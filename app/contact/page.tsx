@@ -38,6 +38,11 @@ export default function ContactPage() {
         <ul className="space-y-2 text-sm text-gray-700">
           <li className="flex gap-2">
             <span className="mt-[2px]">•</span>
+            <span>앨범, 가수명 통합 검색 (6월 중 적용 예정) </span>
+          </li>
+
+          <li className="flex gap-2">
+            <span className="mt-[2px]">•</span>
             <span>릴리즈/판매처 데이터 지속 확장(진행중) </span>
           </li>
 
